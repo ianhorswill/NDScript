@@ -1,0 +1,189 @@
+﻿@page "/"
+@using NDScript;
+@using Task = System.Threading.Tasks.Task
+@inject IJSRuntime JS
+
+<PageTitle>NDScript</PageTitle>
+
+
+<h3>Program</h3>
+
+<code>
+<div id="codeEditor" class="language-ndscript">
+// Find a way from the top-left corner to the bottom-right
+// using only down- and right-moves.  Moving off the board
+// Or hitting a bomb (occupied square) is failure.
+function solve()
+{
+   while (!done())
+      choose 
+         right(); 
+      or
+         down();
+}
+
+// Design of the map
+var s = " ";
+var X = "X";
+var size = 5;
+var map = [
+    [s, s, s, s, s],
+    [s, s, s, s, s],
+    [s, s, s, X, X],
+    [s, s, s, s, s],
+    [s, s, s, X, s]
+];
+
+var x = 0;
+var y = 0;
+
+function right() {
+   map[y][x] = "-";
+   x = x+1;
+   if (x == size || map[y][x] != " ") fail;
+   map[y][x] = "*";
+ }
+
+ function down() {
+   map[y][x] = "|";
+   y = y+1;
+   if (y == size || map[y][x] != " ") fail;
+   map[y][x] = "*";
+ }
+
+function done()
+{
+   return x == size-1 && y == size-1;
+}
+
+function PrintMap()
+{
+  printLine("▒▒▒▒▒▒▒");
+  foreach (row in map) {
+    print("▒");
+    foreach (tile in row) print(tile);
+    printLine("▒");
+  }
+  printLine("▒▒▒▒▒▒▒");
+}
+
+solve();
+PrintMap();
+
+print(x," ",y);
+</div>
+</code>
+
+<script type="module">
+    import {CodeJar} from './codejar.js';
+
+    const highlight = editor => {
+      // highlight.js does not trims old tags,
+      // let's do it by this hack.
+      editor.textContent = editor.textContent;
+      delete editor.dataset.highlighted;
+      hljs.highlightElement(editor);
+    };
+
+    const editor = document.querySelector(".language-ndscript");
+    const jar = CodeJar(editor, highlight);
+
+    // Put jar someplace the non-module scripts can find it.
+    window.jar = jar;
+
+    let dirty = false;
+
+    window.addEventListener('message', function(event) {
+        if (event.source == window.opener)
+        {
+            jar.updateCode(DotNet.invokeMethod('NDScriptSandbox', 'SetSource', event.data));
+            //jar.updateCode(event.data);
+            dirty = false;
+        } else
+            console.log("wrong message sender");
+    } );
+
+    window.addEventListener("beforeunload", function (event) {
+        if (dirty) {
+            event.preventDefault();
+            event.returnValue = '';
+        }
+    });
+
+    document.getElementById('downloadButton').addEventListener('click', function() {
+        // Create a Blob object with the content
+        const blob = new Blob([jar.toString()], { type: "text/plain" });
+
+        // Create a temporary anchor element
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "Saved.step"; // Set the file name
+
+        // Append the anchor to the document, trigger the download, and remove it
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+
+    if (window.opener != null)
+        window.opener.postMessage("_ready_", "*");
+</script>
+
+<script>
+    function GetUserCode() {
+        return jar.toString();
+    }
+</script>
+
+@* <textarea @bind="@source" id="sourceCode" style="width: 800px; height: 400px;" spellcheck="false"/> *@
+<br>
+<button class="btn btn-primary" id="downloadButton">Download program</button>
+
+<button class="btn btn-primary" @onclick="Run">Run</button>
+
+@code {
+    private string outputHeading = "No output";
+    private string output = "no output";
+
+    private async void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter")
+        {
+            StateHasChanged();
+            await Task.Delay(1);
+            Run();
+        }
+    }
+
+    [JSInvokable]
+    public static string SetSource(string sourceCode)
+    {
+        return sourceCode;
+    }
+
+    private async void Run()
+    {
+        try
+        {
+            output = NDScript.ProgramOutput(await JS.InvokeAsync<string>("GetUserCode"));
+        }
+        catch (Exception e)
+        {
+            output = e.Message;
+        }
+
+        StateHasChanged();
+    }
+
+
+
+    private static Home singleton = null!;
+    protected override void OnInitialized()
+    {
+        singleton = this;
+    }
+}
+<p></p>
+<h3>@outputHeading</h3>
+
+<code role="status"><pre>@output</pre></code>
