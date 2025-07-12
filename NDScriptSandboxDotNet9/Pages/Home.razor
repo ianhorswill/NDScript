@@ -1,81 +1,21 @@
 ﻿@page "/"
+@using System.Web
 @using NDScript;
 @using Task = System.Threading.Tasks.Task
 @inject IJSRuntime JS
 
-<PageTitle>NDScript</PageTitle>
+<PageTitle>NDScript sandbox</PageTitle>
 
 
 <h3>Program</h3>
 
-<code>
-<div id="codeEditor" class="language-ndscript">
-// Find a way from the top-left corner to the bottom-right
-// using only down- and right-moves.  Moving off the board
-// Or hitting a bomb (occupied square) is failure.
-function solve()
-{
-   while (!done())
-      choose
-         right();
-      or
-         down();
-}
+<div id="codeEditor" class="language-ndscript">// Enter program here.
 
-// Design of the map
-var s = " ";
-var X = "X";
-var size = 5;
-var map = [
-             [s, s, s, s, s],
-             [s, s, s, s, s],
-             [s, s, s, X, X],
-             [s, s, s, s, s],
-             [s, s, s, X, s]
-           ];
-
-var x = 0;
-var y = 0;
-
-function right() {
-   map[y][x] = "-";
-   x = x+1;
-   if (x == size || map[y][x] != " ") fail;
-   map[y][x] = "*";
-}
-
-function down() {
-   map[y][x] = "|";
-   y = y+1;
-   if (y == size || map[y][x] != " ") fail;
-   map[y][x] = "*";
-}
-
-function done()
-{
-   return x == size-1 && y == size-1;
-}
-
-function PrintMap()
-{
-   printLine("▒▒▒▒▒▒▒");
-   foreach (row in map) {
-      print("▒");
-      foreach (tile in row) print(tile);
-      printLine("▒");
-   }
-   printLine("▒▒▒▒▒▒▒");
-}
-
-solve();
-PrintMap();
-
-print(x," ",y);
-    </div>
-</code>
+</div>
 
 <script type="module">
-    import {CodeJar} from './codejar.js';
+    import { CodeJar } from 'https://cdn.jsdelivr.net/npm/codejar@3.3.0/codejar.min.js';
+    import { withLineNumbers } from 'https://cdn.jsdelivr.net/npm/codejar@3.3.0/linenumbers.min.js';
 
     const highlight = editor => {
       // highlight.js does not trims old tags,
@@ -86,7 +26,7 @@ print(x," ",y);
     };
 
     const editor = document.querySelector(".language-ndscript");
-    const jar = CodeJar(editor, highlight);
+    const jar = CodeJar(editor, withLineNumbers(highlight));
 
     // Put jar someplace the non-module scripts can find it.
     window.jar = jar;
@@ -96,7 +36,7 @@ print(x," ",y);
     window.addEventListener('message', function(event) {
         if (event.source == window.opener)
         {
-            jar.updateCode(DotNet.invokeMethod('NDScriptSandbox', 'SetSource', event.data));
+            jar.updateCode(DotNet.invokeMethod('NDScriptSandboxDotNet9', 'SetSource', event.data));
             //jar.updateCode(event.data);
             dirty = false;
         } else
@@ -143,7 +83,7 @@ print(x," ",y);
 
 @code {
     private string outputHeading = "No output";
-    private string output = "no output";
+    private MarkupString output = (MarkupString)"";
 
     private async void Enter(KeyboardEventArgs e)
     {
@@ -163,13 +103,22 @@ print(x," ",y);
 
     private async void Run()
     {
+        Printing.HtmlOutput = true;
         try
         {
-            output = NDScript.ProgramOutput(await JS.InvokeAsync<string>("GetUserCode"));
+            output = (MarkupString)NDScript.ProgramOutput(await JS.InvokeAsync<string>("GetUserCode"));
+            outputHeading = "Output";
+        }
+        catch (Sprache.ParseException e)
+        {
+            var message = e.Message.Replace("Parsing failure:", "");
+            output = (MarkupString)$"<b>Line {e.Position.Line}:</b><i>{Printing.Htmlify(message)}</i";
+            outputHeading = "Syntax error";
         }
         catch (Exception e)
         {
-            output = e.Message;
+            output = (MarkupString)Printing.Htmlify(e.Message);
+            outputHeading = "Error";
         }
 
         StateHasChanged();
@@ -186,4 +135,4 @@ print(x," ",y);
 <p></p>
 <h3>@outputHeading</h3>
 
-<code role="status"><pre>@output</pre></code>
+@output

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using static NDScript.NDScript;
 
 namespace NDScript.Syntax

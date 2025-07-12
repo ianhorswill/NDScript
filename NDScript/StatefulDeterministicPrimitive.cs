@@ -12,4 +12,17 @@ namespace NDScript
             return k(result.Result, result.NewState);
         }
     }
+
+    public class StatefulDeterministicPrimitive<TIn1, TOut>(string name, Func<TIn1, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name)
+    {
+        public readonly Func<TIn1, State, (TOut Result, State NewState)> Implementation = implementation;
+        public override bool Call(object?[] arguments, State s, NDScript.Continuation k)
+        {
+            ArgumentCountException.Check(1, arguments, this);
+            var result = Implementation(
+                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1"),
+                s);
+            return k(result.Result, result.NewState);
+        }
+    }
 }

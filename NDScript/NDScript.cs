@@ -59,6 +59,8 @@ namespace NDScript
                 return true;
             }
 
+            Minimization.RemoveBudgetConstraints();
+
             if (!new Block(statements).Execute(State.Default, Done, Done))
                 throw new Exception("Program failed");
             return result;
@@ -77,6 +79,6 @@ namespace NDScript
             return comment < 0 ? line : line.Substring(0, comment);
         }
 
-        private static string StripComments(string code) => string.Concat(code.Split('\n').Select(StripLineComment));
+        private static string StripComments(string code) => string.Join('\n', code.Split('\n').Select(StripLineComment));
     }
 }

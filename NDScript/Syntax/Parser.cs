@@ -83,8 +83,17 @@ namespace NDScript.Syntax
             select (Func<Expression,Expression>)(e => new FunctionCall(e, arglist.ToArray()));
 
         private static readonly Parser<Func<Expression, Expression>> ArrayReference =
-            from index in Bracketed('[', Expression, ']')
-            select (Func<Expression,Expression>)(e => new ArrayReference(e, index));
+            from indices in Bracketed('[', Expression.CommaSeparatedList(), ']')
+            select (Func<Expression,Expression>)(e =>
+            {
+                var i = indices.ToArray();
+                return i.Length switch
+                {
+                    1 => new ArrayReference(e, i[0]),
+                    2 => new GridReference(e, i[0], i[1]),
+                    _ => throw new ArgumentException($"Arrays with {i.Length} dimensions are not supported")
+                };
+            });
 
         private static readonly Parser<Func<Expression, Expression>> PostfixModifier = FunctionCall.Or(ArrayReference);
 

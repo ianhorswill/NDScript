@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace NDScript
 {
@@ -48,7 +46,7 @@ namespace NDScript
             new(ImmutableSortedDictionary.CreateRange<StateElement, object?>(
                 Primitives.AllPrimitives.Select(
                         p => new KeyValuePair<StateElement, object?>((StateElement)p.Name, p))
-                    .Append(new KeyValuePair<StateElement, object?>(Printing.PrintState, ImmutableList<string>.Empty))),
+                    .Append(new KeyValuePair<StateElement, object?>(Printing.PrintState, ImmutableList<object>.Empty))),
                 null);
 
         public object? this[StateElement e]

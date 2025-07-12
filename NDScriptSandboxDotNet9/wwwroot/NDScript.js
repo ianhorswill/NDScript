@@ -1,4 +1,5 @@
-﻿const QUOTED_STRING = {
+﻿{
+const QUOTED_STRING = {
     scope: 'string',
     begin: '"',
     end: '"'
@@ -38,7 +39,7 @@ const VARIABLE_DECLARATION = {
 hljs.registerLanguage('ndscript', function () {
     return {
         keywords: {
-            built_in: ['print', 'printLine'],
+            built_in: ['print', 'printLine', 'printImage', 'minimize', 'cost', 'printTilemap', 'grid'],
             keyword: ['if', 'while', 'else', 'or',
                 'choose', 'choose\\s+first',
                 'function', 'var', 'return',
@@ -54,4 +55,5 @@ hljs.registerLanguage('ndscript', function () {
             hljs.C_LINE_COMMENT_MODE
         ]
     }
-});
+})
+}
