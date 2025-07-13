@@ -43,7 +43,7 @@ hljs.registerLanguage('ndscript', function () {
                 'print', 'printLine', 'printImage',
                 'minimize', 'cost',
                 'printGrid', 'printTilemap', 'grid', 'positionsOf', 'neighborsOf',
-                'isSingleton', 'isEmpty', 'size', 'contains', 'chooseElement',
+                'isSingleton', 'isEmpty', 'sizeOf', 'contains', 'chooseElement',
                 'setOf', 'union', 'intersection', 'singletonValue', 'nonsingletonPositions'
             ],
             keyword: ['if', 'while', 'else', 'or',

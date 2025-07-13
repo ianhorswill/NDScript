@@ -53,7 +53,7 @@ namespace NDScript
             new DeterministicPrimitive<ICollection<object?>, bool>("isSingleton", IsSingleton);
             new DeterministicPrimitive<ICollection<object?>, bool>("isEmpty", IsEmpty);
 
-            new DeterministicPrimitive<ICollection<object?>, int>("size", c => c.Count);
+            new DeterministicPrimitive<ICollection<object?>, int>("sizeOf", c => c.Count);
             new DeterministicPrimitive<object?, ICollection<object?>, bool>(
                 "contains",
                 (o, c) => c.Contains(o));
