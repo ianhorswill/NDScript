@@ -32,7 +32,7 @@ namespace NDScript
                 (args, state, k) =>
                 {
                     ArgumentCountException.Check(1, args, chooseElement!);
-                    var collection = Collections.ConvertToList(args[0], state, "Argument to chooseElement() is not a collection");
+                    var collection = ConvertToList(args[0], state, "Argument to chooseElement() is not a collection");
                     if (collection is not object?[] elements)
                     {
                         elements = new object?[collection.Count];
@@ -54,9 +54,9 @@ namespace NDScript
             new DeterministicPrimitive<ICollection<object?>, bool>("isEmpty", IsEmpty);
 
             new DeterministicPrimitive<ICollection<object?>, int>("size", c => c.Count);
-            new DeterministicPrimitive<ICollection<object?>, object?, bool>(
+            new DeterministicPrimitive<object?, ICollection<object?>, bool>(
                 "contains",
-                (c, o) => c.Contains(o));
+                (o, c) => c.Contains(o));
         }
     }
 }

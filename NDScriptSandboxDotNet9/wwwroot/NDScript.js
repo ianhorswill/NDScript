@@ -42,7 +42,7 @@ hljs.registerLanguage('ndscript', function () {
             built_in: [
                 'print', 'printLine', 'printImage',
                 'minimize', 'cost',
-                'printGrid', 'printTilemap', 'grid', 'positionsOf',
+                'printGrid', 'printTilemap', 'grid', 'positionsOf', 'neighborsOf',
                 'isSingleton', 'isEmpty', 'size', 'contains', 'chooseElement',
                 'setOf', 'union', 'intersection', 'singletonValue', 'nonsingletonPositions'
             ],

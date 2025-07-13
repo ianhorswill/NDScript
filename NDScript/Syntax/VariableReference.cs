@@ -7,7 +7,7 @@ namespace NDScript.Syntax
     {
         public readonly StateElement Name = (StateElement)name;
 
-        public override bool Execute(State s, NDScript.Continuation r, NDScript.Continuation k) => k(s[Name], s);
+        public override bool Execute(State s, Continuation r, Continuation k) => k(s[Name], s);
 
         public override bool Set(object? value, State s, Continuation r, Continuation k) => k(value, s.Set(Name, value));
     }

@@ -11,6 +11,17 @@ namespace NDScriptTests
     [TestClass()]
     public class GridTests
     {
+        //[TestMethod]
+        //public void 
+
+        [TestMethod]
+        public void MineBumbler()
+        {
+            var s = ProgramOutput(bumbler);
+            Console.WriteLine(s);
+            Assert.AreEqual("4 4", s);
+        }
+
         private static string bumbler = @"
 // Find a way from the top-left corner to the bottom-right
 // using only down- and right-moves.  Moving off the board
@@ -57,13 +68,5 @@ solve();
 
 print(x,"" "",y);
 ";
-
-        [TestMethod]
-        public void MineBumbler()
-        {
-            var s = ProgramOutput(bumbler);
-            Console.WriteLine(s);
-            Assert.AreEqual("4 4", s);
-        }
     }
 }

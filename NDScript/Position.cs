@@ -33,5 +33,10 @@ namespace NDScript
             if (xComparison != 0) return xComparison;
             return Y.CompareTo(other.Y);
         }
+
+        public Position Left => At(X - 1, Y);
+        public Position Right => At(X + 1, Y);
+        public Position Up => At(X, Y - 1);
+        public Position Down => At(X, Y + 1);
     }
 }

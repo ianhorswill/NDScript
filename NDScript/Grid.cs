@@ -65,6 +65,21 @@ namespace NDScript
             return (grid, s.SetGlobal(grid.Contents, initialContents.ToImmutableSortedDictionary()));
         }
 
+        public bool ValidPosition(Position p) =>
+            p.X >= 0 && p.Y >= 0 && p.X < Width && p.Y < Height;
+
+        public IEnumerable<Position> NeighborsOf(Position p, State s)
+        {
+            var neighbor = p.Left;
+            if (ValidPosition(neighbor)) yield return neighbor;
+            neighbor = p.Right;
+            if (ValidPosition(neighbor)) yield return neighbor;
+            neighbor = p.Up;
+            if (ValidPosition(neighbor)) yield return neighbor;
+            neighbor = p.Down;
+            if (ValidPosition(neighbor)) yield return neighbor;
+        }
+
         #region Primitives
 
         private static GeneralPrimitive? constructor;
@@ -77,7 +92,7 @@ namespace NDScript
                     ArgumentCountException.Check(1, args, constructor!);
                     var si = ArgumentTypeException.CastObject<ArrayExpression>(args[0], typeof(Array),
                         "Initializer for grid should be an array of arrays");
-                    var gridInfo = Grid.MakeGrid(s, (ImmutableArray<object?>)s[si]!);
+                    var gridInfo = MakeGrid(s, (ImmutableArray<object?>)s[si]!);
                     return k(gridInfo.grid, gridInfo.state);
                 });
 
@@ -122,7 +137,7 @@ namespace NDScript
                     for (var y = 0; y < grid.Height; y++)
                     {
                         for (var x = 0; x < grid.Width; x++) 
-                            b.Append($"<img src=\"{grid.GetCell(x, y, state)}\">");
+                            b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary((string)grid.GetCell(x, y, state))}\">");
                         b.Append("<br>");
                     }
                     b.Append("</p>");
@@ -133,7 +148,9 @@ namespace NDScript
                 => g.CurrentContents(s).Select(p => p.Key));
 
             new DeterministicPrimitive<Grid, IEnumerable<object?>>("nonsingletonPositionsOf", (s, g)
-                => g.CurrentContents(s).Where(p => Collections.IsSingleton((ICollection<object?>)p.Value)).Select(p => p.Key));
+                => g.CurrentContents(s).Where(p => Collections.IsSingleton((ICollection<object?>)p.Value!)).Select(p => p.Key));
+
+            new DeterministicPrimitive<Position, Grid, IEnumerable<Position>>("neighborsOf", (s, p, g) => g.NeighborsOf(p, s));
         }
 
 
