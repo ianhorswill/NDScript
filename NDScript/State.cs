@@ -89,6 +89,8 @@ namespace NDScript
             return new State(_data, _parent.Set(e, value));
         }
 
+        internal State SetGlobal(StateElement e, object? value) => ReplaceGlobal(Global.Set(e, value));
+
         /// <summary>
         /// Adds or updates a binding in the current scope for the specified variable or other state element
         /// </summary>

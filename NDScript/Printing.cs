@@ -28,5 +28,30 @@ namespace NDScript
 
         public static State NewLine(State s) => Print("\n", s);
         public static State PrintImage(string url, State s) => s.Set(PrintState, OutputList(s).Add($"<img src=\"{url}\">"));
+
+        internal static void MakePrimitives()
+        {
+            new GeneralPrimitive("print", (args, s, k) =>
+            {
+                var state = s;
+                foreach (var item in args)
+                    state = Printing.Print(item, state);
+                return k(null, state);
+            });
+
+            new GeneralPrimitive("printLine", (args, s, k) =>
+            {
+                var state = s;
+                foreach (var item in args)
+                    state = Printing.Print(item, state);
+                return k(null, Printing.NewLine(state));
+            });
+
+            new StatefulDeterministicPrimitive<string, object?>(
+                "printImage",
+                (url, state) => (null, Printing.PrintImage(url, state)));
+
+            new DeterministicPrimitive<int, int, Position>("position", (x, y) => Position.At(x, y));
+        }
     }
 }

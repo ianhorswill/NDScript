@@ -18,13 +18,13 @@ namespace NDScript.Syntax
                 if (argIndex < Elements.Length)
                     return Elements[argIndex].Execute(newState, r, ElementEvaluated);
                 var array = actualElements.ToImmutableArray();
-                return k(objectId, newState.Global.Create(objectId, array));
+                return k(objectId, newState.SetGlobal(objectId, array));
             }
 
             if (Elements.Length == 0)
             {
                 var array = actualElements.ToImmutableArray();
-                return k(objectId, s.Global.Create(objectId, array));
+                return k(objectId, s.SetGlobal(objectId, array));
             }
             return Elements[0].Execute(s, r, ElementEvaluated);
         }

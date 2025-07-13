@@ -15,13 +15,13 @@ namespace NDScript.Syntax
         {
             return Collection.Execute(s, r, (c, newState) =>
             {
-                var objectId = ArgumentTypeException.CastObject<ArrayExpression>(c, typeof(Array),
+                var collection = Collections.ConvertToList(
+                    c, newState,
                     "Collection expression in a foreach was not a collection type");
-                var collection = (ImmutableArray<object?>)newState[objectId]!;
                 var i = 0;
 
                 bool NextElement(object? _, State state) =>
-                    i == collection.Length
+                    i == collection.Count
                         ? k(null, state)
                         : Body.Execute(
                             new State([new KeyValuePair<StateElement, object?>(Variable, collection[i++])], state), r, NextElement);
