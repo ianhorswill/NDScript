@@ -1,14 +1,15 @@
 ﻿using System.Collections.Immutable;
+using static NDScript.NDScript;
 
 namespace NDScriptTests.Syntax
 {
-    [TestClass()]
+    [TestClass]
     public class ArrayExpressionTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void ExecuteTest()
         {
-            var value = (ImmutableArray<object>)NDScript.NDScript.RunExpression("[1,2,3, 4]")!;
+            var value = (ImmutableArray<object>)RunExpression("[1,2,3, 4]")!;
             
             CollectionAssert.AreEqual(new object[] { 1, 2, 3, 4 }, value.ToArray());
         }
@@ -16,13 +17,13 @@ namespace NDScriptTests.Syntax
         [TestMethod]
         public void InitializerTest()
         {
-            Assert.AreEqual(1, NDScript.NDScript.RunProgram("var a = [1, 2, 3]; return a[0];"));
+            Assert.AreEqual(1, RunProgram("var a = [1, 2, 3]; return a[0];"));
         }
 
         [TestMethod]
         public void NestedTest()
         {
-            Assert.AreEqual(3, NDScript.NDScript.RunProgram("var a = [ [1, 2], [3, 4]]; return a[1][0];"));
+            Assert.AreEqual(3, RunProgram("var a = [ [1, 2], [3, 4]]; return a[1][0];"));
         }
     }
 }

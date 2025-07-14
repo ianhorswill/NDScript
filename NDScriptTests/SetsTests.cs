@@ -58,5 +58,29 @@ namespace NDScriptTests
             Assert.AreEqual("{2}", ProgramOutput("print(intersection(setOf(1,2), setOf(2,3)));"));
             Assert.AreEqual("{}", ProgramOutput("print(intersection(setOf(1), setOf(2,3)));"));
         }
+
+        [TestMethod]
+        public void ChooseElement()
+        {
+            var choose1 = 0;
+            var choose2 = 0;
+            var output = "";
+            for (int i = 0; i < 100; i++)
+                switch (output = ProgramOutput("print(chooseElement(setOf(1,2)));"))
+                {
+                    case "1":
+                        choose1++;
+                        break;
+
+                    case "2":
+                        choose2++;
+                        break;
+
+                    default:
+                        throw new Exception($"Invalid program output: {output}");
+                }
+            Assert.IsTrue(choose1 > 30);
+            Assert.IsTrue(choose2 > 30);
+        }
     }
 }

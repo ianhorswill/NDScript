@@ -19,5 +19,11 @@ namespace NDScriptTests.Syntax
                 })
             );
         }
+
+        [TestMethod]
+        public void ParseTest()
+        {
+            Parser.Block.End().Parse("{ print(\"▒\");  printLine(\"▒\"); }");
+        }
     }
 }

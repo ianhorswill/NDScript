@@ -1,18 +1,24 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static NDScript.NDScript;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static NDScript.NDScript;
 
 namespace NDScriptTests
 {
     [TestClass()]
     public class GridTests
     {
-        //[TestMethod]
-        //public void 
+        [TestMethod]
+        public void RandomGrid()
+        {
+            foreach (var c in ProgramOutput("var s = setOf(1,2); var g = grid([[s, s], [s, s]]); foreach (p in positionsOf(g)) g[p] = chooseElement(g[p]); printGrid(g);"))
+                Assert.IsTrue(c == '1' || c == '2' || c == '\n');
+        }
+
+        [TestMethod]
+        public void NonsingletonPositions()
+        {
+            var programOutput = ProgramOutput("var s = setOf(1,2); var g = grid([[s, s], [s, s]]); foreach (p in nonsingletonPositionsOf(g)) g[p] = chooseElement(g[p]); printGrid(g);");
+            foreach (var c in programOutput)
+                Assert.IsTrue(c == '1' || c == '2' || c == '\n');
+        }
 
         [TestMethod]
         public void MineBumbler()

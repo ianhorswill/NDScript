@@ -7,6 +7,11 @@ namespace NDScript.Syntax
 {
     public static class Parser
     {
+        /// <summary>
+        /// Things that aren't valid identifier names
+        /// </summary>
+        public static readonly string[] Keywords = { "fail", "choose", "var", "function", "or", "else", "foreach", "in", "return", "true", "false", "null" };
+
         public static readonly Parser<Expression> Expression = Parse.Ref(() => RealExpression);
         public static readonly Parser<Statement> Statement = Parse.Ref(() => RealStatement);
 
@@ -17,13 +22,67 @@ namespace NDScript.Syntax
         public static readonly CommentParser CommentStyle = new CommentParser();
 
         #region Utilities
+
+        private static Parser<T> Commit<T>(this Parser<T> parser) =>
+            input =>
+            {
+                var result = parser(input);
+                if (result.WasSuccessful)
+                    return result;
+                throw new ParseException(result.ToString(), Sprache.Position.FromInput(result.Remainder));
+            };
+
+        public static Parser<T> ChainOperatorCommitted<T, TOp>(
+            Parser<TOp> op,
+            Parser<T> operand,
+            Func<TOp, T, T, T> apply)
+        {
+            if (op == null) throw new ArgumentNullException(nameof(op));
+            if (operand == null) throw new ArgumentNullException(nameof(operand));
+            if (apply == null) throw new ArgumentNullException(nameof(apply));
+            return operand.Then(first => ChainOperatorRestCommitted(first, op, operand, apply, Parse.Or));
+        }
+
+        static Parser<T> ChainOperatorRestCommitted<T, TOp>(
+            T firstOperand,
+            Parser<TOp> op,
+            Parser<T> operand,
+            Func<TOp, T, T, T> apply,
+            Func<Parser<T>, Parser<T>, Parser<T>> or)
+        {
+            if (op == null) throw new ArgumentNullException(nameof(op));
+            if (operand == null) throw new ArgumentNullException(nameof(operand));
+            if (apply == null) throw new ArgumentNullException(nameof(apply));
+            return or(op.Then(opValue =>
+                    operand.Commit().Then(operandValue =>
+                        ChainOperatorRestCommitted(apply(opValue, firstOperand, operandValue), op, operand, apply, or))),
+                Parse.Return(firstOperand));
+        }
+
+        public static Parser<IEnumerable<T>> DelimitedByCommited<T, U>(this Parser<T> parser, Parser<U> delimiter, int? minimumCount, int? maximumCount)
+        {
+            if (parser == null) throw new ArgumentNullException(nameof(parser));
+            if (delimiter == null) throw new ArgumentNullException(nameof(delimiter));
+
+            return from head in parser.Once()
+                from tail in
+                    (from separator in delimiter
+                        from item in parser.Commit()
+                        select item).Repeat(minimumCount - 1, maximumCount - 1)
+                select head.Concat(tail);
+        }
+
         private static Parser<T> Bracketed<T>(char open, Parser<T> enclosed, char close) =>
-            enclosed.Contained(Parse.Char(open).Token(), Parse.Char(close).Token());
+            from start in Parse.Char(open).Token()
+            from payload in enclosed.Commit()
+            from end in Parse.Char(close).Token().Commit()
+            select payload;
 
         private static Parser<T> Parenthesized<T>(this Parser<T> enclosed) => Bracketed('(', enclosed, ')');
 
         public static Parser<IEnumerable<T>> CommaSeparatedList<T>(this Parser<T> element) =>
-            (element).DelimitedBy(Parse.Char(',').Token()).Or(Parse.Return(Array.Empty<T>())).Token();
+            (element).DelimitedByCommited(
+                Parse.Char(',').Token(), null, null).Or(Parse.Return(Array.Empty<T>())).Token();
 
         public static readonly Parser<IEnumerable<Expression>> Arglist =
             Expression.CommaSeparatedList().Parenthesized();
@@ -41,9 +100,9 @@ namespace NDScript.Syntax
             select new ArrayExpression(elements.ToArray())).Named("array expression");
 
         private static readonly Parser<string> Identifier =
-            Parse.Identifier(Parse.Letter, Parse.LetterOrDigit)
-                .Except(Parse.String("fail").Or(Parse.String("choose")).Or(Parse.String("var")))
-                    .Token().Named("identifier");
+            (from id in Parse.Identifier(Parse.Letter, Parse.LetterOrDigit).Token()
+                where !Keywords.Contains(id)
+                select id).Named("identifier");
 
         private static readonly Parser<int> Sign =
             Parse.Char('+').Return(1).XOr(Parse.Char('-').Return(-1)).Or(Parse.Return(1)).Named("sign");
@@ -83,7 +142,7 @@ namespace NDScript.Syntax
             select (Func<Expression,Expression>)(e => new FunctionCall(e, arglist.ToArray()));
 
         private static readonly Parser<Func<Expression, Expression>> ArrayReference =
-            from indices in Bracketed('[', Expression.CommaSeparatedList(), ']')
+            from indices in Bracketed('[', Expression.Commit().CommaSeparatedList(), ']')
             select (Func<Expression,Expression>)(e =>
             {
                 var i = indices.ToArray();
@@ -128,7 +187,7 @@ namespace NDScript.Syntax
             Parse.Char('/').Return(BinaryOperatorExpression.Divide).Token();
 
         public static readonly Parser<Expression> MultiplicativeExpression =
-            Parse.ChainOperator(Times.Or(Divide), UnaryExpression, 
+            ChainOperatorCommitted(Times.Or(Divide), UnaryExpression.Named("expression"), 
                 (op, left, right) => new BinaryOperatorExpression(op, left, right));
         #endregion
 
@@ -139,7 +198,7 @@ namespace NDScript.Syntax
             Parse.Char('-').Return(BinaryOperatorExpression.Subtract).Token();
 
         public static readonly Parser<Expression> AdditiveExpression =
-            Parse.ChainOperator(Plus.Or(Minus), MultiplicativeExpression,
+            ChainOperatorCommitted(Plus.Or(Minus), MultiplicativeExpression.Named("expression"),
                 (op, left, right) => new BinaryOperatorExpression(op, left, right));
         #endregion
 
@@ -149,9 +208,15 @@ namespace NDScript.Syntax
             .Or((Parse.Char('<').Return(BinaryOperatorExpression.Le)))
             .Or((Parse.Char('>').Return(BinaryOperatorExpression.Le))).Token().Named("relational operator");
 
+        private static Parser<TExp> RelationExpressionCompletion<TExp, TRel>(TExp left, Parser<TRel> op, Parser<TExp> exp, Func<TExp, TRel, TExp, TExp> result) =>
+            (from o in op
+                from right in exp.Commit()
+                select result(left, o, right));
+
         public static readonly Parser<Expression> RelationalExpression =
-            Parse.ChainOperator(RelationalOperator, AdditiveExpression, (op,
-                left, right) => new BinaryOperatorExpression(op, left, right));
+            AdditiveExpression.Then(left => RelationExpressionCompletion(left, RelationalOperator, AdditiveExpression.Named("expression"),
+                    (l, op, r) => new BinaryOperatorExpression(op, l, r))
+                .Or(Parse.Return(left)));
         #endregion
 
         #region Equality expression
@@ -160,17 +225,18 @@ namespace NDScript.Syntax
                 .Or((Parse.String("!=").Return(BinaryOperatorExpression.Neq)))).Token().Named("relational operator");
 
         public static readonly Parser<Expression> EqualityExpression =
-            Parse.ChainOperator(EqualityOperator, RelationalExpression, (op,
-                left, right) => new BinaryOperatorExpression(op, left, right));
+            RelationalExpression.Then(left => RelationExpressionCompletion(left, EqualityOperator, RelationalExpression.Named("expression"),
+                    (l, op, r) => new BinaryOperatorExpression(op, l, r))
+                .Or(Parse.Return(left)));
         #endregion
 
         #region Logical expressions
         private static readonly Parser<Expression> LogicalAndExpression =
-            Parse.ChainOperator(Parse.String("&&").Token(), EqualityExpression,
+            ChainOperatorCommitted(Parse.String("&&").Token(), EqualityExpression.Named("expression"),
                 (_, left, right) => new ShortCircuitOperatorExpression(false, left, right));
 
         private static readonly Parser<Expression> LogicalOrExpression =
-            Parse.ChainOperator(Parse.String("||").Token(), LogicalAndExpression,
+            ChainOperatorCommitted(Parse.String("||").Token(), LogicalAndExpression.Named("expression"),
                 (_, left, right) => new ShortCircuitOperatorExpression(true, left, right));
         #endregion
 
@@ -186,14 +252,14 @@ namespace NDScript.Syntax
         #region Simple statements
         private static readonly Parser<Statement> VariableDeclaration =
             (from v in Parse.String("var").Token()
-                from name in Identifier
-                from _ in Parse.Char('=').Token()
-                from value in Expression
+                from name in Identifier.Commit()
+                from _ in Parse.Char('=').Token().Commit()
+                from value in Expression.Named("expression").Commit()
                 select new VariableDeclaration(name, value)).Token().Named("variable declaration");
 
         private static readonly Parser<Statement> ReturnStatement =
             (from _ in Parse.String("return").Token()
-                from value in Expression
+                from value in Expression.Commit()
                 select new Return(value)).Token().Named("return statement");
 
         private static readonly Parser<Statement> SimpleStatement =
@@ -204,14 +270,14 @@ namespace NDScript.Syntax
 
         #region Compound statements
         public static readonly Parser<Block> Block =
-            (from statements in Bracketed('{', StatementSequence, '}')
-            select new Block(statements)).Named("block");
+            (from statements in Bracketed('{', Statement.Many(), '}')
+            select new Block(statements.ToArray())).Named("block");
 
         public static readonly Parser<FunctionDeclaration> FunctionDefinition =
             (from _ in Parse.String("function").Token()
-            from name in Identifier
-            from args in Parenthesized(CommaSeparatedList(Identifier))
-            from b in Block
+            from name in Identifier.Commit()
+            from args in Parenthesized(CommaSeparatedList(Identifier)).Commit()
+            from b in Block.Commit()
             select new FunctionDeclaration(name, args.ToArray(), b)).Named("function definition");
 
         private static readonly Parser<Statement?> OptionalElse =
@@ -221,41 +287,41 @@ namespace NDScript.Syntax
 
         public static readonly Parser<Statement> IfStatement =
             (from _ in Parse.String("if").Token()
-            from _2 in Parse.Char('(').Token()
-            from condition in Expression
-            from _3 in Parse.Char(')').Token()
-            from consequent in Statement
+            from _2 in Parse.Char('(').Token().Commit()
+            from condition in Expression.Commit()
+            from _3 in Parse.Char(')').Token().Commit()
+            from consequent in Statement.Commit()
             from alternative in OptionalElse
             select new IfStatement(condition, consequent, alternative)).Named("if statement");
 
         public static readonly Parser<Statement> WhileStatement =
             (from _ in Parse.String("while").Token()
-                from _2 in Parse.Char('(').Token()
-                from condition in Expression
-                from _3 in Parse.Char(')').Token()
-                from body in Statement
+                from _2 in Parse.Char('(').Token().Commit()
+                from condition in Expression.Commit()
+                from _3 in Parse.Char(')').Token().Commit()
+                from body in Statement.Commit()
                 select new WhileStatement(condition, body)).Named("while statement");
 
         private static readonly Parser<Statement> OptionClause =
             (from _ in Parse.String("or").Token()
-            from s in Statement
+            from s in Statement.Commit()
             select s).Named("option");
 
         public static readonly Parser<Statement> ChooseStatement =
             (from _ in Parse.String("choose").Token()
                 from mode in (Parse.String("first").Token().Return(true)).Or(Parse.Return(false))
-                from first in Statement
+                from first in Statement.Commit()
                 from rest in OptionClause.Many()
                 select new ChooseStatement(rest.Prepend(first).ToArray(), mode)).Named("choose statement");
 
         public static readonly Parser<Statement> ForeachStatement =
             (from _ in Parse.String("foreach").Token()
-                from open in Parse.Char('(').Token()
-                from name in Identifier
-                from _2 in Parse.String("in").Token()
-                from collection in Expression
-                from close in Parse.Char(')').Token()
-                from body in Statement
+                from open in Parse.Char('(').Token().Commit()
+                from name in Identifier.Named("variable").Commit()
+                from _2 in Parse.String("in").Token().Commit()
+                from collection in Expression.Named("collection expression").Commit()
+                from close in Parse.Char(')').Token().Commit()
+                from body in Statement.Named("body").Commit()
                 select new ForeachStatement(name, collection, body)).Named("foreach statement");
         #endregion
 

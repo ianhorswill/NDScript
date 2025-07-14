@@ -137,7 +137,7 @@ namespace NDScript
                     for (var y = 0; y < grid.Height; y++)
                     {
                         for (var x = 0; x < grid.Width; x++) 
-                            b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary((string)grid.GetCell(x, y, state))}\">");
+                            b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(((string)grid.GetCell(x, y, state)!)!)}\">");
                         b.Append("<br>");
                     }
                     b.Append("</p>");
@@ -148,7 +148,7 @@ namespace NDScript
                 => g.CurrentContents(s).Select(p => p.Key));
 
             new DeterministicPrimitive<Grid, IEnumerable<object?>>("nonsingletonPositionsOf", (s, g)
-                => g.CurrentContents(s).Where(p => Collections.IsSingleton((ICollection<object?>)p.Value!)).Select(p => p.Key));
+                => g.CurrentContents(s).Where(p => !Collections.IsSingleton((ICollection<object?>)p.Value!)).Select(p => p.Key));
 
             new DeterministicPrimitive<Position, Grid, IEnumerable<Position>>("neighborsOf", (s, p, g) => g.NeighborsOf(p, s));
         }
