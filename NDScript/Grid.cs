@@ -155,6 +155,30 @@ namespace NDScript
                     return (grid, Printing.PrintRaw(b.ToString(), state));
                 });
 
+            new StatefulDeterministicPrimitive<Grid, string, Grid>(
+                "printSingletonTilemap",
+                (grid, defaultTile, state) =>
+                {
+                    if (!Printing.HtmlOutput)
+                        throw new InvalidOperationException($"Can't output tilemap when not rendering HTML");
+
+                    var b = new StringBuilder();
+                    b.Append("<p>");
+                    for (var y = 0; y < grid.Height; y++)
+                    {
+                        for (var x = 0; x < grid.Width; x++)
+                        {
+                            var tileSet = (ImmutableHashSet<object?>)grid.GetCell(x, y, state)!;
+                            var tile = Collections.IsSingleton(tileSet) ? (string)tileSet.First()! : defaultTile;
+                            b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(tile)}\">");
+                        }
+
+                        b.Append("<br>");
+                    }
+                    b.Append("</p>");
+                    return (grid, Printing.PrintRaw(b.ToString(), state));
+                });
+
             new DeterministicPrimitive<Grid, IEnumerable<object?>>("positionsOf", (s, g)
                 => g.CurrentContents(s).Select(p => p.Key));
 

@@ -82,7 +82,15 @@ print(x,"" "",y);
         }
 
         private static readonly string WFC = @"
-var g = makeGrid(2, 2, setOf(1, 2, 3));
+var beach = ""beach"";
+var grass = ""grass"";
+var water = ""water"";
+var g = makeGrid(4, 4, setOf(beach, grass, water));
+var compatible = relation(
+   [beach, grass], [beach, grass], [beach, beach],
+   [water, water], [water, beach],
+   [grass, grass], [grass, beach]);
+
 var remaining = nonsingletonPositionsOf(g);
 function solve() {
     while (!isEmpty(remaining)) {
@@ -98,9 +106,9 @@ function narrowTo(position, set) {
   var new = intersection(g[position], set);
   if (old != new) {
      g[position] = new;
-     printLine(neighborsOf(position, g));
+     var neighborCompatible = leftImage(compatible, new);
      foreach (n in neighborsOf(position, g))
-       narrowTo(n, set);
+       narrowTo(n, neighborCompatible);
   }
 }
 

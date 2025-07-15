@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using NDScript.Syntax;
+﻿using System.Collections.Generic;
 
 namespace NDScript
 {
@@ -15,6 +13,7 @@ namespace NDScript
             Grid.MakePrimitives();
             Sets.MakePrimitives();
             Collections.MakePrimitives();
+            Relation.MakePrimitives();
         }
     }
 }
