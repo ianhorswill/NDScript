@@ -8,9 +8,9 @@ namespace NDScript.Syntax
     {
         public readonly Expression Array = array;
         public readonly Expression Index = index;
-        public override bool Execute(State s, Continuation r, Continuation k)
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k)
         {
-            return Array.Execute(s, r, (array, ns) => Index.Execute(ns, r, (index, fs) =>
+            return Array.Execute(s, stack, r, (array, ns) => Index.Execute(ns, stack, r, (index, fs) =>
             {
                 switch (array)
                 {
@@ -30,9 +30,9 @@ namespace NDScript.Syntax
             }));
         }
 
-        public override bool Set(object? value, State s, Continuation r, Continuation k)
+        public override bool Set(object? value, State s, CallStack? stack, Continuation r, Continuation k)
         {
-            return Array.Execute(s, r, (array, ns) => Index.Execute(ns, r, (index, fs) =>
+            return Array.Execute(s, stack, r, (array, ns) => Index.Execute(ns, stack, r, (index, fs) =>
             {
                 switch (array)
                 {

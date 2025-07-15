@@ -29,7 +29,7 @@ namespace NDScript
         {
             chooseElement = new GeneralPrimitive(
                 "chooseElement",
-                (args, state, k) =>
+                (args, state, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, chooseElement!);
                     var collection = ConvertToList(args[0], state, "Argument to chooseElement() is not a collection");
@@ -53,7 +53,9 @@ namespace NDScript
             new DeterministicPrimitive<ICollection<object?>, bool>("isSingleton", IsSingleton);
             new DeterministicPrimitive<ICollection<object?>, bool>("isEmpty", IsEmpty);
 
-            new DeterministicPrimitive<ICollection<object?>, int>("sizeOf", c => c.Count);
+            new DeterministicPrimitive<ICollection<object?>, int>("sizeOf",
+                c =>
+                    c.Count);
             new DeterministicPrimitive<object?, ICollection<object?>, bool>(
                 "contains",
                 (o, c) => c.Contains(o));

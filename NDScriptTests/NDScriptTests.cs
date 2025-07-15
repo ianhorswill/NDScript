@@ -5,6 +5,14 @@ namespace NDScriptTests
     [TestClass()]
     public class IntegrationTests
     {
+        [TestMethod]
+        public void MineBumbler()
+        {
+            var s = ProgramOutput(bumbler);
+            Console.WriteLine(s);
+            Assert.IsTrue(s.EndsWith("\n4 4"));
+        }
+
         private static string bumbler = @"
 // Find a way from the top-left corner to the bottom-right
 // using only down- and right-moves.  Moving off the board
@@ -67,11 +75,37 @@ print(x,"" "",y);
 ";
 
         [TestMethod]
-        public void MineBumbler()
+        public void WFCTest()
         {
-            var s = ProgramOutput(bumbler);
-            Console.WriteLine(s);
-            Assert.IsTrue(s.EndsWith("\n4 4"));
+            var o = ProgramOutput(WFC);
+            Console.WriteLine(o);
         }
+
+        private static readonly string WFC = @"
+var g = makeGrid(2, 2, setOf(1, 2, 3));
+var remaining = nonsingletonPositionsOf(g);
+function solve() {
+    while (!isEmpty(remaining)) {
+      var p = chooseElement(remaining);
+      var tile = chooseElement(g[p]);
+      narrowTo(p, setOf(tile));
+      remaining = nonsingletonPositionsOf(g);
+    }
+}
+
+function narrowTo(position, set) {
+  var old = g[position];
+  var new = intersection(g[position], set);
+  if (old != new) {
+     g[position] = new;
+     printLine(neighborsOf(position, g));
+     foreach (n in neighborsOf(position, g))
+       narrowTo(n, set);
+  }
+}
+
+solve();
+printGrid(g);
+";
     }
 }

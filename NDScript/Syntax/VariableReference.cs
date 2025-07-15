@@ -1,5 +1,4 @@
-﻿using System;
-using static NDScript.NDScript;
+﻿using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
@@ -7,8 +6,8 @@ namespace NDScript.Syntax
     {
         public readonly StateElement Name = (StateElement)name;
 
-        public override bool Execute(State s, Continuation r, Continuation k) => k(s[Name], s);
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k) => k(s[Name], s);
 
-        public override bool Set(object? value, State s, Continuation r, Continuation k) => k(value, s.Set(Name, value));
+        public override bool Set(object? value, State s, CallStack? stack, Continuation r, Continuation k) => k(value, s.Set(Name, value));
     }
 }

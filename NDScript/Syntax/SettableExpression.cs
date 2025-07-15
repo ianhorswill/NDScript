@@ -5,7 +5,7 @@ namespace NDScript.Syntax
 {
     public abstract class SettableExpression(Expression[] subexpressions) : Expression(subexpressions)
     {
-        public abstract bool Set(object? value, State s, Continuation r, Continuation k);
+        public abstract bool Set(object? value, State s, CallStack? stack, Continuation r, Continuation k);
 
         public static SettableExpression CheckSettable(Expression e)
         {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Generic;
 
 namespace NDScript.Syntax
 {
@@ -11,9 +8,9 @@ namespace NDScript.Syntax
         public readonly Expression Collection = collection;
         public readonly Statement Body = body;
 
-        public override bool Execute(State s, NDScript.Continuation r, NDScript.Continuation k)
+        public override bool Execute(State s, CallStack? stack, NDScript.Continuation r, NDScript.Continuation k)
         {
-            return Collection.Execute(s, r, (c, newState) =>
+            return Collection.Execute(s, stack, r, (c, newState) =>
             {
                 var collection = Collections.ConvertToList(
                     c, newState,
@@ -24,7 +21,9 @@ namespace NDScript.Syntax
                     i == collection.Count
                         ? k(null, state)
                         : Body.Execute(
-                            new State([new KeyValuePair<StateElement, object?>(Variable, collection[i++])], state), r, NextElement);
+                            new State([new KeyValuePair<StateElement, object?>(Variable, collection[i++])], state),
+                            stack,
+                            r, NextElement);
 
                 return NextElement(null, newState);
             });

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
@@ -8,7 +9,7 @@ namespace NDScript.Syntax
         public readonly StateElement[] Arguments = arguments.Select(s => (StateElement)s).ToArray();
         public readonly Block Body = body;
 
-        public override bool Execute(State s, NDScript.Continuation r, NDScript.Continuation k)
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k)
             => k(null, s.Create((StateElement)Name, new UserFunction(Name, Arguments, Body)));
     }
 }

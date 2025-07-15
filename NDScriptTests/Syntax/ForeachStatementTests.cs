@@ -1,8 +1,7 @@
-﻿using NDScript;
+﻿using NDScript.Syntax;
 using Sprache;
-using static NDScript.NDScript;
 
-namespace NDScript.Syntax
+namespace NDScriptTests.Syntax
 {
     [TestClass()]
     public class ForeachStatementTests

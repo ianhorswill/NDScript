@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NDScript.Syntax;
@@ -19,11 +18,11 @@ namespace NDScript
                 null);
             var exp = Parser.Expression.End().Parse(code);
             object? result = null!;
-            if (exp.Execute(state, NoReturnContinuation, (value, state) =>
+            if (exp.Execute(state, null, NoReturnContinuation, (value, s) =>
                 {
                     result = value;
                     if (result is StateElement si)
-                        result = state[si];
+                        result = s[si];
                     return true;
                 }))
                 return result;
@@ -42,7 +41,7 @@ namespace NDScript
                 return true;
             }
 
-            if (!new Block(statements).Execute(State.Default, Done, Done))
+            if (!new Block(statements).Execute(State.Default, null, Done, Done))
                 throw new Exception("Program failed");
             return result;
         }
@@ -61,7 +60,7 @@ namespace NDScript
 
             Minimization.RemoveBudgetConstraints();
 
-            if (!new Block(statements).Execute(State.Default, Done, Done))
+            if (!new Block(statements).Execute(State.Default, null, Done, Done))
                 throw new Exception("Program failed");
             return result;
         }
@@ -75,7 +74,7 @@ namespace NDScript
 
         private static string StripLineComment(string line)
         {
-            var comment = line.IndexOf("//");
+            var comment = line.IndexOf("//", StringComparison.Ordinal);
             return comment < 0 ? line : line.Substring(0, comment);
         }
 

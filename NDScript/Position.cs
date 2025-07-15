@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace NDScript
 {
+    [DebuggerDisplay("({X},{Y})")]
     public class Position : IComparable<Position>
     {
         private static readonly Dictionary<(int, int), Position> PositionTable = new();
@@ -38,5 +40,7 @@ namespace NDScript
         public Position Right => At(X + 1, Y);
         public Position Up => At(X, Y - 1);
         public Position Down => At(X, Y + 1);
+
+
     }
 }

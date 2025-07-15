@@ -87,13 +87,24 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             constructor = new GeneralPrimitive("grid",
-                (args, s, k) =>
+                (args, s, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, constructor!);
                     var si = ArgumentTypeException.CastObject<ArrayExpression>(args[0], typeof(Array),
                         "Initializer for grid should be an array of arrays");
                     var gridInfo = MakeGrid(s, (ImmutableArray<object?>)s[si]!);
                     return k(gridInfo.grid, gridInfo.state);
+                });
+
+            new StatefulDeterministicPrimitive<int, int, object?, Grid>(
+                "makeGrid",
+                (width, height, initialValue, state) =>
+                {
+                    var g = new Grid(width, height);
+                    var contents = Enumerable.Range(0, width)
+                        .SelectMany(x => Enumerable.Range(0, height)
+                            .Select(y => new KeyValuePair<Position, object?>(Position.At(x, y), initialValue)));
+                    return (g, state.SetGlobal(g.Contents, ImmutableSortedDictionary.CreateRange(contents)));
                 });
 
             new StatefulDeterministicPrimitive<Grid, Grid>(
@@ -111,7 +122,7 @@ namespace NDScript
                         {
                             if (Printing.HtmlOutput)
                                 b.Append("<td>");
-                            b.Append(grid.GetCell(x, y, state));
+                            Printing.Format(grid.GetCell(x, y, state), b);
                             if (Printing.HtmlOutput)
                                 b.Append("</td>");
                         }
@@ -147,10 +158,11 @@ namespace NDScript
             new DeterministicPrimitive<Grid, IEnumerable<object?>>("positionsOf", (s, g)
                 => g.CurrentContents(s).Select(p => p.Key));
 
-            new DeterministicPrimitive<Grid, IEnumerable<object?>>("nonsingletonPositionsOf", (s, g)
-                => g.CurrentContents(s).Where(p => !Collections.IsSingleton((ICollection<object?>)p.Value!)).Select(p => p.Key));
+            new DeterministicPrimitive<Grid, object?[]>("nonsingletonPositionsOf", (s, g)
+                => g.CurrentContents(s).Where(p => !Collections.IsSingleton((ICollection<object?>)p.Value!))
+                    .Select(p => p.Key).Cast<object?>().ToArray());
 
-            new DeterministicPrimitive<Position, Grid, IEnumerable<Position>>("neighborsOf", (s, p, g) => g.NeighborsOf(p, s));
+            new DeterministicPrimitive<Position, Grid, object?[]>("neighborsOf", (s, p, g) => g.NeighborsOf(p, s).Cast<object?>().ToArray());
         }
 
 

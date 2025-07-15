@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using static NDScript.NDScript;
 
 namespace NDScript.Syntax
@@ -13,10 +15,10 @@ namespace NDScript.Syntax
         public readonly Expression LeftArgument = leftArgument;
         public readonly Expression RightArgument = rightArgument;
 
-        public override bool Execute(State s, Continuation r, Continuation k) 
-            => LeftArgument.Execute(s, r,
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k) 
+            => LeftArgument.Execute(s, stack, r,
                 (left, newState) =>
-                    RightArgument.Execute(newState, r,
+                    RightArgument.Execute(newState, stack, r,
                         (right, finalState) => k(Operation(left, right), finalState)));
 
         public static object? Add(object? left, object? right)
@@ -88,7 +90,23 @@ namespace NDScript.Syntax
                    >= ArgumentTypeException.CastSingle(right, "/", "right");
         }
 
-        public static object? Eq(object? left, object? right) => Equals(left, right);
-        public static object? Neq(object? left, object? right) => !Equals(left, right);
+        public static object Eq(object? left, object? right) => CheckEquality(left, right);
+
+        public static bool CheckEquality(object? left, object? right)
+        {
+            if (left is ImmutableHashSet<object?> sl && right is ImmutableHashSet<object?> sr)
+                return sl.IsSubsetOf(sr) && sr.IsSubsetOf(sl);
+            if (left is IList<object?> al && right is IList<object?> ar)
+            {
+                if (al.Count != ar.Count) return false;
+                for (var i = 0; i < al.Count; i++)
+                    if (!CheckEquality(al[i], ar[i]))
+                        return false;
+                return true;
+            }
+            return Equals(left, right);
+        }
+
+        public static object? Neq(object? left, object? right) => !CheckEquality(left, right);
     }
 }

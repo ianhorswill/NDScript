@@ -7,8 +7,8 @@ namespace NDScript.Syntax
         public readonly Func<object?, object?> Operation = operation;
         public readonly Expression Argument = argument;
 
-        public override bool Execute(State s, NDScript.Continuation r, NDScript.Continuation k) 
-            => Argument.Execute(s, r, (arg, newState) => k(Operation(arg), newState));
+        public override bool Execute(State s, CallStack? stack, NDScript.Continuation r, NDScript.Continuation k) 
+            => Argument.Execute(s, stack, r, (arg, newState) => k(Operation(arg), newState));
 
         public static Func<object?, object?> Wrap<T>(Func<T, object?> typed, string name)
             => arg => typed(ArgumentTypeException.Cast<T>(arg, name, "1"));

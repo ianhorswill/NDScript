@@ -10,11 +10,11 @@ namespace NDScript.Syntax
         public readonly Expression X = x;
         public readonly Expression Y = y;
 
-        public override bool Execute(State s, Continuation r, Continuation k)
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k)
         {
-            return Array.Execute(s, r, (array, ns) => 
-                X.Execute(ns, r, (x, ms) =>
-                    Y.Execute(ms, r, (y, fs) =>
+            return Array.Execute(s, stack, r, (array, ns) => 
+                X.Execute(ns, stack, r, (x, ms) =>
+                    Y.Execute(ms, stack, r, (y, fs) =>
             {
                 var grid = ArgumentTypeException.Cast<Grid>(array,
                     "Argument to grid reference was not a grid");
@@ -24,11 +24,11 @@ namespace NDScript.Syntax
             })));
         }
 
-        public override bool Set(object? value, State s, Continuation r, Continuation k)
+        public override bool Set(object? value, State s, CallStack? stack, Continuation r, Continuation k)
         {
-            return Array.Execute(s, r, (array, ns) => 
-                X.Execute(ns, r, (x, ms) =>
-                    Y.Execute(ms, r, (y, fs) =>
+            return Array.Execute(s, stack, r, (array, ns) => 
+                X.Execute(ns, stack, r, (x, ms) =>
+                    Y.Execute(ms, stack, r, (y, fs) =>
                     {
                         var grid = ArgumentTypeException.Cast<Grid>(array,
                             "Argument to grid reference was not a grid");

@@ -12,7 +12,7 @@ namespace NDScriptTests.Syntax
         {
             var statement = Parser.Statement.Parse("a = 1;");
             var s = new State([new((StateElement)"a", 0)], null);
-            Assert.IsTrue(statement.Execute(s, null!, (v, ns) =>
+            Assert.IsTrue(statement.Execute(s, null, null!, (v, ns) =>
                                             {
                                                 Assert.AreEqual(1, ns["a"]);
                                                 return true;

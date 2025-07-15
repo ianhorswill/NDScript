@@ -9,7 +9,7 @@ namespace NDScript.Syntax
     /// </summary>
     public abstract class AstNode
     {
-        public abstract bool Execute(State s, Continuation r, Continuation k);
+        public abstract bool Execute(State s, CallStack? stack, Continuation r, Continuation k);
         public readonly AstNode[] Children;
 
         protected AstNode(AstNode[] children)

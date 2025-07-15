@@ -7,7 +7,7 @@ namespace NDScript
     {
         public readonly string Name = name;
 
-        public abstract bool Call(object?[] arguments, State s, Continuation k);
+        public abstract bool Call(object?[] arguments, State s, CallStack? stack, Continuation k);
 
         public override string ToString()
         {

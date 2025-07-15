@@ -39,7 +39,7 @@ namespace NDScript
             return b.ToString();
         }
 
-        private static void Format(object? o, StringBuilder b, bool escapeStrings = false)
+        public static void Format(object? o, StringBuilder b, bool escapeStrings = false)
         {
             switch (o)
             {
@@ -53,6 +53,14 @@ namespace NDScript
 
                 case false:
                     b.Append("false");
+                    break;
+
+                case Position p:
+                    b.Append('(');
+                    b.Append(p.X);
+                    b.Append(',');
+                    b.Append(p.Y);
+                    b.Append(')');
                     break;
 
                 case string s when escapeStrings:
@@ -116,7 +124,9 @@ namespace NDScript
 
         internal static void MakePrimitives()
         {
-            new GeneralPrimitive("print", (args, s, k) =>
+            // ReSharper disable ObjectCreationAsStatement
+            new GeneralPrimitive("print", (args, s, _, k) =>
+
             {
                 var state = s;
                 foreach (var item in args)
@@ -124,7 +134,7 @@ namespace NDScript
                 return k(null, state);
             });
 
-            new GeneralPrimitive("printLine", (args, s, k) =>
+            new GeneralPrimitive("printLine", (args, s, _, k) =>
             {
                 var state = s;
                 foreach (var item in args)
@@ -137,6 +147,7 @@ namespace NDScript
                 (url, state) => (null, PrintImage(url, state)));
 
             new DeterministicPrimitive<int, int, Position>("position", (x, y) => Position.At(x, y));
+            // ReSharper restore ObjectCreationAsStatement
         }
     }
 }

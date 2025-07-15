@@ -19,7 +19,7 @@ namespace NDScriptTests.Syntax
         {
             var statement = Parser.Statement.Parse("function f(x) { return x+1; }");
             var s = State.Default;
-            Assert.IsTrue(statement.Execute(s, null!, (v, ns) =>
+            Assert.IsTrue(statement.Execute(s, null, null!, (v, ns) =>
                 {
                     var func = ns["f"] as UserFunction;
                     Assert.IsInstanceOfType<UserFunction>(func);

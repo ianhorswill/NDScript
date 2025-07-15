@@ -1,11 +1,13 @@
 ﻿using System.Collections.Immutable;
+using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
+    // ReSharper disable once CoVariantArrayConversion
     public class ArrayExpression(Expression[] elements) : Expression(elements)
     {
         public readonly Expression[] Elements = elements;
-        public override bool Execute(State s, NDScript.Continuation r, NDScript.Continuation k)
+        public override bool Execute(State s, CallStack?  stack, Continuation r, Continuation k)
         {
             var objectId = State.CreateObject(this);
 
@@ -16,7 +18,7 @@ namespace NDScript.Syntax
             {
                 actualElements[argIndex++] = value;
                 if (argIndex < Elements.Length)
-                    return Elements[argIndex].Execute(newState, r, ElementEvaluated);
+                    return Elements[argIndex].Execute(newState, stack, r, ElementEvaluated);
                 var array = actualElements.ToImmutableArray();
                 return k(objectId, newState.SetGlobal(objectId, array));
             }
@@ -26,7 +28,7 @@ namespace NDScript.Syntax
                 var array = actualElements.ToImmutableArray();
                 return k(objectId, s.SetGlobal(objectId, array));
             }
-            return Elements[0].Execute(s, r, ElementEvaluated);
+            return Elements[0].Execute(s, stack, r, ElementEvaluated);
         }
     }
 }

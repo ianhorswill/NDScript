@@ -8,7 +8,7 @@ namespace NDScript
         { }
 
         public readonly Func<State, TOut> Implementation = implementation;
-        public override bool Call(object?[] arguments, State s, NDScript.Continuation k)
+        public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
         {
             ArgumentCountException.Check(0, arguments, this);
             return k(Implementation(s), s);
@@ -22,7 +22,7 @@ namespace NDScript
         { }
         
         public readonly Func<State, TIn1, TOut> Implementation = implementation;
-        public override bool Call(object?[] arguments, State s, NDScript.Continuation k)
+        public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
         {
             ArgumentCountException.Check(1, arguments, this);
             var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1");
@@ -37,7 +37,7 @@ namespace NDScript
         { }
         
         public readonly Func<State, TIn1, TIn2, TOut> Implementation = implementation;
-        public override bool Call(object?[] arguments, State s, NDScript.Continuation k)
+        public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
         {
             ArgumentCountException.Check(2, arguments, this);
             var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1");
@@ -53,7 +53,7 @@ namespace NDScript
         { }
         
         public readonly Func<State, TIn1, TIn2, TIn3, TOut> Implementation = implementation;
-        public override bool Call(object?[] arguments, State s, NDScript.Continuation k)
+        public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
         {
             ArgumentCountException.Check(2, arguments, this);
             var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1");

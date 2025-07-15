@@ -2,12 +2,12 @@
 
 namespace NDScript
 {
-    public class GeneralPrimitive(string name, Func<object?[], State, NDScript.Continuation, bool> implementation) : PrimitiveBase(name)
+    public class GeneralPrimitive(string name, Func<object?[], State, CallStack?, NDScript.Continuation, bool> implementation) : PrimitiveBase(name)
     {
-        public readonly Func<object?[], State, NDScript.Continuation, bool> Implementation = implementation;
-        public override bool Call(object?[] arguments, State s, NDScript.Continuation k)
+        public readonly Func<object?[], State, CallStack?, NDScript.Continuation, bool> Implementation = implementation;
+        public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
         {
-            return Implementation(arguments, s, k);
+            return Implementation(arguments, s, stack, k);
         }
     }
 }

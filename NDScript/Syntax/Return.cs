@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
@@ -8,7 +6,7 @@ namespace NDScript.Syntax
     {
         public readonly Expression Value = value;
 
-        public override bool Execute(State s, NDScript.Continuation r, NDScript.Continuation k)
-            => Value.Execute(s, r, r);
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k)
+            => Value.Execute(s, stack, r, r);
     }
 }

@@ -14,11 +14,11 @@ namespace NDScript.Syntax
 
         public string OperatorName => IdempotentValue ? "||" : "&&";
 
-        public override bool Execute(State s, Continuation r, Continuation k) 
-            => LeftArgument.Execute(s, r,
+        public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k) 
+            => LeftArgument.Execute(s, stack, r,
                 (left, newState) => 
                     IdempotentValue == ArgumentTypeException.Cast<bool>(left, OperatorName, "left") 
                         ? k(left, newState) 
-                        : RightArgument.Execute(newState, r, k));
+                        : RightArgument.Execute(newState, stack, r, k));
     }
 }

@@ -20,7 +20,7 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             Minimize = new GeneralPrimitive("minimize",
-                (args, state, k) =>
+                (args, state, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, Minimize!);
                     var function = ArgumentTypeException.Cast<Function>(args[0], Minimize!.Name, "function");
@@ -33,6 +33,7 @@ namespace NDScript
                     while (!function.Call(
                                Array.Empty<object?>(),
                                state,
+                               new CallStack(Minimize, args, stack),
                                (value, newState) =>
                                {
                                    succeeded = true;
@@ -46,12 +47,15 @@ namespace NDScript
                         Budget++;
                     }
 
-                    return succeeded && k(result, finalState);
+                    var done = succeeded && k(result, finalState);
+                    if (!done)
+                        Budget = save;
+                    return done;
                 });
 
             Cost = new GeneralPrimitive(
                 "cost",
-                (args, state, k) =>
+                (args, state, _, k) =>
                 {
                     ArgumentCountException.Check(1, args, Cost!);
                     var cost = ArgumentTypeException.Cast<int>(args[0], Cost!.Name, "cost");
