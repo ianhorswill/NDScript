@@ -19,7 +19,7 @@ namespace NDScript
 
         internal static void MakePrimitives()
         {
-            Minimize = new GeneralPrimitive("minimize",
+            Minimize = new GeneralPrimitive("minimize", true,
                 (args, state, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, Minimize!);
@@ -54,7 +54,7 @@ namespace NDScript
                 });
 
             Cost = new GeneralPrimitive(
-                "cost",
+                "cost", false,
                 (args, state, _, k) =>
                 {
                     ArgumentCountException.Check(1, args, Cost!);

@@ -42,12 +42,13 @@ hljs.registerLanguage('ndscript', function () {
             built_in: [
                 'print', 'printLine', 'printImage',
                 'minimize', 'cost',
-                'printGrid', 'printTilemap', 'grid', 'makeGrid', 'positionsOf', 'neighborsOf',
+                'printGrid', 'printTilemap', 'printTilesetMap', 'grid', 'makeGrid', 'positionsOf', 'neighborsOf',
                 'isSingleton', 'isEmpty', 'sizeOf', 'contains', 'chooseElement',
-                'setOf', 'union', 'intersection', 'singletonValue', 'nonsingletonPositions'
+                'setOf', 'union', 'intersection', 'singletonValue', 'nonsingletonPositions',
+                'relation', 'leftImage', 'rightImage'
             ],
             keyword: ['if', 'while', 'else', 'or',
-                'choose', 'choose\\s+first',
+                'choose', 'choose\\s+first', 'deterministic',
                 'function', 'var', 'return',
                 'in', 'fail', 'foreach'],
             literal: ['false', 'true', 'null'],

@@ -6,7 +6,7 @@ namespace NDScript
     {
         public static readonly List<PrimitiveBase> AllPrimitiveFunctions = new();
 
-        protected PrimitiveBase(string name) : base(name)
+        protected PrimitiveBase(string name, bool isDeterministic) : base(name, isDeterministic)
         {
             Primitives.AllPrimitives.Add(this);
         }

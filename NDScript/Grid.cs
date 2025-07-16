@@ -86,7 +86,7 @@ namespace NDScript
 
         internal static void MakePrimitives()
         {
-            constructor = new GeneralPrimitive("grid",
+            constructor = new GeneralPrimitive("grid", true,
                 (args, s, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, constructor!);
@@ -156,7 +156,7 @@ namespace NDScript
                 });
 
             new StatefulDeterministicPrimitive<Grid, string, Grid>(
-                "printSingletonTilemap",
+                "printTilesetMap",
                 (grid, defaultTile, state) =>
                 {
                     if (!Printing.HtmlOutput)

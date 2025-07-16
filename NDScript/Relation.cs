@@ -6,7 +6,7 @@ using static NDScript.NDScript;
 
 namespace NDScript
 {
-    public class Relation(string name, IEnumerable<(object, object)> extension) : Function(name)
+    public class Relation(string name, IEnumerable<(object, object)> extension) : Function(name, true)
     {
         private readonly HashSet<(object, object)> _extension = [..extension];
         private Dictionary<object?, ImmutableHashSet<object?>>? leftImage, rightImage;
@@ -65,7 +65,7 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             // ReSharper disable ObjectCreationAsStatement
-            new GeneralPrimitive("relation",
+            new GeneralPrimitive("relation", true,
                 (args, state, _, k) =>
                 {
                     (object, object) DecodeArg(object? arg)

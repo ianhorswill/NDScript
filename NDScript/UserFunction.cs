@@ -6,7 +6,7 @@ using static NDScript.NDScript;
 
 namespace NDScript
 {
-    public class UserFunction(string name, StateElement[] arguments, Statement body) : Function(name)
+    public class UserFunction(string name, bool isDeterministic, StateElement[] arguments, Statement body) : Function(name, isDeterministic)
     {
         public readonly StateElement[] Arguments = arguments;
         public readonly Statement Body = body;

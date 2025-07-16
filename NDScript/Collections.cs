@@ -28,7 +28,7 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             chooseElement = new GeneralPrimitive(
-                "chooseElement",
+                "chooseElement", false,
                 (args, state, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, chooseElement!);

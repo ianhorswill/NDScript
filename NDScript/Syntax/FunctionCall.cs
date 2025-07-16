@@ -16,6 +16,29 @@ namespace NDScript.Syntax
             var actualArguments = new object?[Arguments.Length];
             Function? function;
 
+            bool DoCall(State state)
+            {
+                if (function.IsDeterministic)
+                {
+                    object? result = null;
+                    State finalState = s;
+                    if (function.Call(actualArguments, state, 
+                            new CallStack(function, actualArguments, caller),
+                            (returnValue, fs) =>
+                            {
+                                result = returnValue;
+                                finalState = fs;
+                                return true;
+                            }))
+                        return k(result, finalState);
+                    return false;
+                }
+                return function.Call(actualArguments, state, 
+                    new CallStack(function, actualArguments, caller),
+                    (returnValue, finalState) =>
+                        k(returnValue, s.ReplaceGlobal(finalState.Global)));
+            }
+
             bool ArgEvaluated(object? value, State newState)
             {
                 actualArguments[argIndex++] = value;
@@ -23,10 +46,7 @@ namespace NDScript.Syntax
                     return Arguments[argIndex].Execute(newState, caller, r, ArgEvaluated);
 
                 // Actually call it
-                return function.Call(actualArguments, newState, 
-                    new CallStack(function, actualArguments, caller),
-                    (returnValue, finalState) =>
-                        k(returnValue, s.ReplaceGlobal(finalState.Global)));
+                return DoCall(newState);
             }
 
             return Function.Execute(s, caller, r, (fn, state) =>
@@ -35,9 +55,7 @@ namespace NDScript.Syntax
                 if (function == null)
                     throw new Exception($"Attempt to call {Printing.Format(fn)}, which is not a function");
                 if (actualArguments.Length == 0)
-                    return function.Call(actualArguments, state,
-                        new CallStack(function, actualArguments, caller),
-                        (returnValue, finalState) => k(returnValue, s.ReplaceGlobal(finalState.Global)));
+                    return DoCall(state);
                 return Arguments[0].Execute(state, caller, r, ArgEvaluated);
             });
         }

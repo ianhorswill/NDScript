@@ -2,7 +2,7 @@
 
 namespace NDScript
 {
-    public class StatefulDeterministicPrimitive<TOut>(string name, Func<State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name)
+    public class StatefulDeterministicPrimitive<TOut>(string name, Func<State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name, true)
     {
         public readonly Func<State, (TOut Result, State NewState)> Implementation = implementation;
         public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
@@ -13,7 +13,7 @@ namespace NDScript
         }
     }
 
-    public class StatefulDeterministicPrimitive<TIn1, TOut>(string name, Func<TIn1, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name)
+    public class StatefulDeterministicPrimitive<TIn1, TOut>(string name, Func<TIn1, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name, true)
     {
         public readonly Func<TIn1, State, (TOut Result, State NewState)> Implementation = implementation;
         public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
@@ -26,7 +26,7 @@ namespace NDScript
         }
     }
 
-    public class StatefulDeterministicPrimitive<TIn1, TIn2, TOut>(string name, Func<TIn1, TIn2, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name)
+    public class StatefulDeterministicPrimitive<TIn1, TIn2, TOut>(string name, Func<TIn1, TIn2, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name, true)
     {
         public readonly Func<TIn1, TIn2, State, (TOut Result, State NewState)> Implementation = implementation;
         public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)
@@ -40,7 +40,7 @@ namespace NDScript
         }
     }
 
-    public class StatefulDeterministicPrimitive<TIn1, TIn2, TIn3, TOut>(string name, Func<TIn1, TIn2, TIn3, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name)
+    public class StatefulDeterministicPrimitive<TIn1, TIn2, TIn3, TOut>(string name, Func<TIn1, TIn2, TIn3, State, (TOut Result, State NewState)> implementation) : PrimitiveBase(name, true)
     {
         public readonly Func<TIn1, TIn2, TIn3, State, (TOut Result, State NewState)> Implementation = implementation;
         public override bool Call(object?[] arguments, State s, CallStack? stack, NDScript.Continuation k)

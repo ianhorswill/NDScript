@@ -10,7 +10,7 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             // ReSharper disable ObjectCreationAsStatement
-            new GeneralPrimitive("setOf",
+            new GeneralPrimitive("setOf", true,
                 (args, s, _, k) =>
                     k(args.ToImmutableHashSet(), s));
 
@@ -23,7 +23,7 @@ namespace NDScript
                 (s1, s2) => s1.Intersect(s2));
             // ReSharper restore ObjectCreationAsStatement
 
-            _singletonValuePrimitive = new GeneralPrimitive("singletonValue",
+            _singletonValuePrimitive = new GeneralPrimitive("singletonValue", true,
                 (args, s, _, k) =>
                 {
                     ArgumentCountException.Check(1, args, _singletonValuePrimitive!);

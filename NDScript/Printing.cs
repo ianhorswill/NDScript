@@ -125,7 +125,8 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             // ReSharper disable ObjectCreationAsStatement
-            new GeneralPrimitive("print", (args, s, _, k) =>
+            new GeneralPrimitive("print", true,
+                (args, s, _, k) =>
 
             {
                 var state = s;
@@ -134,7 +135,8 @@ namespace NDScript
                 return k(null, state);
             });
 
-            new GeneralPrimitive("printLine", (args, s, _, k) =>
+            new GeneralPrimitive("printLine", true,
+                (args, s, _, k) =>
             {
                 var state = s;
                 foreach (var item in args)

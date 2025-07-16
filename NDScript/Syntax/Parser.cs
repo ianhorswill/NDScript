@@ -273,12 +273,15 @@ namespace NDScript.Syntax
             (from statements in Bracketed('{', Statement.Many(), '}')
             select new Block(statements.ToArray())).Named("block");
 
+        private static Parser<bool> DeterminismTag = (Parse.String("deterministic").Return(true)).Or(Parse.Return(false));
+
         public static readonly Parser<FunctionDeclaration> FunctionDefinition =
-            (from _ in Parse.String("function").Token()
+            (from det in DeterminismTag
+                from _ in Parse.String("function").Token()
             from name in Identifier.Commit()
             from args in Parenthesized(CommaSeparatedList(Identifier)).Commit()
             from b in Block.Commit()
-            select new FunctionDeclaration(name, args.ToArray(), b)).Named("function definition");
+            select new FunctionDeclaration(name, det, args.ToArray(), b)).Named("function definition");
 
         private static readonly Parser<Statement?> OptionalElse =
             (from _ in Parse.String("else").Token()

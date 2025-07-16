@@ -2,7 +2,7 @@
 
 namespace NDScript
 {
-    public class DeterministicPrimitive<TOut>(string name, Func<State, TOut> implementation) : PrimitiveBase(name)
+    public class DeterministicPrimitive<TOut>(string name, Func<State, TOut> implementation) : PrimitiveBase(name, true)
     {
         public DeterministicPrimitive(string name, Func<TOut> implementation) : this(name, (_) => implementation())
         { }
@@ -15,7 +15,7 @@ namespace NDScript
         }
     }
 
-    public class DeterministicPrimitive<TIn1, TOut>(string name, Func<State, TIn1, TOut> implementation) : PrimitiveBase(name)
+    public class DeterministicPrimitive<TIn1, TOut>(string name, Func<State, TIn1, TOut> implementation) : PrimitiveBase(name, true)
     {
         public DeterministicPrimitive(string name, Func<TIn1, TOut> implementation)
             : this(name, (_, in1) => implementation(in1))
@@ -30,7 +30,7 @@ namespace NDScript
         }
     }
     
-    public class DeterministicPrimitive<TIn1, TIn2, TOut>(string name, Func<State, TIn1, TIn2, TOut> implementation) : PrimitiveBase(name)
+    public class DeterministicPrimitive<TIn1, TIn2, TOut>(string name, Func<State, TIn1, TIn2, TOut> implementation) : PrimitiveBase(name, true)
     {
         public DeterministicPrimitive(string name, Func<TIn1, TIn2, TOut> implementation)
             : this(name, (_, in1, in2) => implementation(in1, in2))
@@ -46,7 +46,7 @@ namespace NDScript
         }
     }
     
-    public class DeterministicPrimitive<TIn1, TIn2, TIn3, TOut>(string name, Func<State, TIn1, TIn2, TIn3, TOut> implementation) : PrimitiveBase(name)
+    public class DeterministicPrimitive<TIn1, TIn2, TIn3, TOut>(string name, Func<State, TIn1, TIn2, TIn3, TOut> implementation) : PrimitiveBase(name, true)
     {
         public DeterministicPrimitive(string name, Func<TIn1, TIn2, TIn3, TOut> implementation)
             : this(name, (_, in1, in2, in3) => implementation(in1, in2, in3))
