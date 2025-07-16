@@ -23,7 +23,7 @@ namespace NDScript.Syntax
                     object? result = null;
                     State finalState = s;
                     if (function.Call(actualArguments, this, state, 
-                            new CallStack(function, actualArguments, caller),
+                            new CallStack(function, actualArguments, caller, this),
                             (returnValue, fs) =>
                             {
                                 result = returnValue;
@@ -34,7 +34,7 @@ namespace NDScript.Syntax
                     return false;
                 }
                 return function.Call(actualArguments, this, state, 
-                    new CallStack(function, actualArguments, caller),
+                    new CallStack(function, actualArguments, caller, this),
                     (returnValue, finalState) =>
                         k(returnValue, s.ReplaceGlobal(finalState.Global)));
             }

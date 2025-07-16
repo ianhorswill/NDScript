@@ -138,26 +138,7 @@ namespace NDScript
 
             new StatefulDeterministicPrimitive<Grid, Grid>(
                 "printTilemap",
-                (grid, state) =>
-                {
-                    if (!Printing.HtmlOutput)
-                        throw new InvalidOperationException($"Can't output tilemap when not rendering HTML");
-
-                    var b = new StringBuilder();
-                    b.Append("<p>");
-                    for (var y = 0; y < grid.Height; y++)
-                    {
-                        for (var x = 0; x < grid.Width; x++) 
-                            b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(((string)grid.GetCell(x, y, state)!)!)}\">");
-                        b.Append("<br>");
-                    }
-                    b.Append("</p>");
-                    return (grid, Printing.PrintRaw(b.ToString(), state));
-                });
-
-            new StatefulDeterministicPrimitive<Grid, string, Grid>(
-                "printTilesetMap",
-                (grid, defaultTile, state) =>
+                (site, stack, grid, state) =>
                 {
                     if (!Printing.HtmlOutput)
                         throw new InvalidOperationException($"Can't output tilemap when not rendering HTML");
@@ -168,8 +149,42 @@ namespace NDScript
                     {
                         for (var x = 0; x < grid.Width; x++)
                         {
-                            var tileSet = (ImmutableHashSet<object?>)grid.GetCell(x, y, state)!;
-                            var tile = Collections.IsSingleton(tileSet) ? (string)tileSet.First()! : defaultTile;
+                            var cell = ArgumentTypeException.Cast<string>(
+                                grid.GetCell(x, y, state),
+                                "printTilemap", "grid element",
+                                site,
+                                stack);   
+                            b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(cell)}\">");
+                        }
+
+                        b.Append("<br>");
+                    }
+                    b.Append("</p>");
+                    return (grid, Printing.PrintRaw(b.ToString(), state));
+                });
+
+            new StatefulDeterministicPrimitive<Grid, string, Grid>(
+                "printTilesetMap",
+                (site, stack, grid, defaultTile, state) =>
+                {
+                    if (!Printing.HtmlOutput)
+                        throw new InvalidOperationException($"Can't output tilemap when not rendering HTML");
+
+                    var b = new StringBuilder();
+                    b.Append("<p>");
+                    for (var y = 0; y < grid.Height; y++)
+                    {
+                        for (var x = 0; x < grid.Width; x++)
+                        {
+                            var tileSet = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(
+                                grid.GetCell(x, y, state),
+                                "printTilesetMap", "grid element", site, stack);
+                            var tile = Collections.IsSingleton(tileSet) ? ArgumentTypeException.Cast<string>(
+                                    tileSet.First(),
+                                    "printTilesetMap",
+                                    "grid tileset element",
+                                    site, stack)
+                                : defaultTile;
                             b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(tile)}\">");
                         }
 

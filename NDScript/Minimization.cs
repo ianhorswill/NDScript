@@ -24,7 +24,7 @@ namespace NDScript
                 (args, callSite, state, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, Minimize!);
-                    var function = ArgumentTypeException.Cast<Function>(args[0], Minimize!.Name, "function");
+                    var function = ArgumentTypeException.Cast<Function>(args[0], Minimize!.Name, "function", callSite, stack);
                     var save = Budget;
                     Budget = 0;
                     InsufficientBudget = false;
@@ -34,7 +34,7 @@ namespace NDScript
                     while (!function.Call(
                                Array.Empty<object?>(), callSite,
                                state,
-                               new CallStack(Minimize, args, stack),
+                               new CallStack(Minimize, args, stack, callSite),
                                (value, newState) =>
                                {
                                    succeeded = true;

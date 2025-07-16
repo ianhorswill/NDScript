@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using NDScript.Syntax;
 
 namespace NDScript
 {
@@ -10,15 +11,17 @@ namespace NDScript
         public readonly CallStack? Parent;
         public readonly Function Function;
         public readonly object?[] Arguments;
+        public readonly FunctionCall CallSize;
         public readonly int Depth;
 
         public static int MaxDepth = 100;
 
-        public CallStack(Function function, object?[] arguments, CallStack? parent)
+        public CallStack(Function function, object?[] arguments, CallStack? parent, FunctionCall callSite)
         {
             Function = function;
             Arguments = arguments;
             Parent = parent;
+            CallSize = callSite;
             Depth = parent?.Depth+1 ?? 1;
             if (Depth > MaxDepth)
                 throw new Exception($"Maximum recursion depth exceeded.  Call stack:\n{this.ToString()}");
