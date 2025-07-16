@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using NDScript.Syntax;
 
 namespace NDScript
@@ -13,15 +14,23 @@ namespace NDScript
         public static bool IsSingleton(ICollection<object?> set) => set.Count == 1;
         public static bool IsEmpty(ICollection<object?> set) => set.Count == 0;
 
-        public static IList ConvertToList(object? value, State s, string errorMessage) =>
-            value switch
+        public static IList ConvertToList(object? value, State s, string errorMessage, AstNode? site = null, CallStack? stack = null)
+        {
+            switch (value)
             {
-                StateElement => (ImmutableArray<object?>)s.Global[
-                    ArgumentTypeException.CastObject<ArrayExpression>(value, typeof(IList), errorMessage)]!,
-                IList l => l,
-                IEnumerable<object?> ie => new List<object?>(ie),
-                _ => throw new ArgumentTypeException(errorMessage, typeof(IList), value)
-            };
+                case StateElement:
+                    return (ImmutableArray<object?>)s.Global[
+                        ArgumentTypeException.CastObject<ArrayExpression>(value, typeof(IList), errorMessage, site,
+                            stack)]!;
+                case IList l:
+                    return l;
+                case IEnumerable<object?> ie:
+                    return new List<object?>(ie);
+                default:
+                    var ex = new ArgumentTypeException(errorMessage, typeof(IList), value);
+                    throw site != null? new ExecutionException(site, stack, ex): ex;
+            }
+        }
 
         private static GeneralPrimitive? chooseElement;
 
@@ -29,9 +38,9 @@ namespace NDScript
         {
             chooseElement = new GeneralPrimitive(
                 "chooseElement", false,
-                (args, state, stack, k) =>
+                (args, site, state, stack, k) =>
                 {
-                    ArgumentCountException.Check(1, args, chooseElement!);
+                    ArgumentCountException.Check(1, args, chooseElement!, site, stack);
                     var collection = ConvertToList(args[0], state, "Argument to chooseElement() is not a collection");
                     if (collection is not object?[] elements)
                     {

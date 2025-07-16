@@ -25,10 +25,11 @@ namespace NDScript.Syntax
                         return k(g.GetCell(p, fs), fs);
 
                     default:
-                        throw new ArgumentException("Argument to array reference in not a collection");
+                        throw new ExecutionException(this, stack, new ArgumentException($"Argument {Printing.Format(array, true)} to array reference in not a collection"));
                 }
             }));
         }
+
 
         public override bool Set(object? value, State s, CallStack? stack, Continuation r, Continuation k)
         {
@@ -47,7 +48,7 @@ namespace NDScript.Syntax
                         return k(value, g.SetCell(p, fs, value));
 
                     default:
-                        throw new ArgumentException("Argument to array assignment in not a collection");
+                        throw new ExecutionException(this, stack, new ArgumentException($"Argument {Printing.Format(array, true)} to array assignment in not a collection"));
                 }
             }));
         }

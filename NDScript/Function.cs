@@ -8,7 +8,7 @@ namespace NDScript
         public readonly string Name = name;
         public readonly bool IsDeterministic = isDeterministic;
 
-        public abstract bool Call(object?[] arguments, State s, CallStack? stack, Continuation k);
+        public abstract bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack, Continuation k);
 
         public override string ToString()
         {

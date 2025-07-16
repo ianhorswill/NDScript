@@ -11,7 +11,7 @@ namespace NDScript
         public readonly StateElement[] Arguments = arguments;
         public readonly Statement Body = body;
 
-        public override bool Call(object?[] arguments, State s, CallStack? stack, Continuation k)
+        public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack, Continuation k)
         {
             if (Arguments.Length != arguments.Length)
                 throw new Exception(

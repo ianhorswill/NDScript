@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using NDScript.Syntax;
 using static NDScript.NDScript;
 
 namespace NDScript
@@ -10,7 +11,7 @@ namespace NDScript
     {
         private readonly HashSet<(object, object)> _extension = [..extension];
         private Dictionary<object?, ImmutableHashSet<object?>>? leftImage, rightImage;
-        public override bool Call(object?[] arguments, State s, CallStack? stack, Continuation k)
+        public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack, Continuation k)
         {
             ArgumentCountException.Check(2, arguments, this);
             return k(_extension.Contains((arguments[0]!, arguments[1]!)), s);
@@ -66,12 +67,12 @@ namespace NDScript
         {
             // ReSharper disable ObjectCreationAsStatement
             new GeneralPrimitive("relation", true,
-                (args, state, _, k) =>
+                (args, site, state, stack, k) =>
                 {
                     (object, object) DecodeArg(object? arg)
                     {
                         var l = Collections.ConvertToList(arg, state,
-                            "Arguments to relation must be two-element arrays");
+                            "Arguments to relation must be two-element arrays", site, stack);
                         if (l.Count != 2)
                             throw new ArgumentException("Arguments to relation must be two-element arrays");
                         return (l[0], l[1]);

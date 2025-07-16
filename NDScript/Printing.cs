@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 
@@ -32,10 +33,10 @@ namespace NDScript
 
         public static State Print(string d, State s) => PrintRaw(Htmlify(d), s);
 
-        public static string Format(object? o)
+        public static string Format(object? o, bool escapeStrings = false)
         {
             var b = new StringBuilder();
-            Format(o, b);
+            Format(o, b, escapeStrings);
             return b.ToString();
         }
 
@@ -126,7 +127,7 @@ namespace NDScript
         {
             // ReSharper disable ObjectCreationAsStatement
             new GeneralPrimitive("print", true,
-                (args, s, _, k) =>
+                (args, site, s, _, k) =>
 
             {
                 var state = s;
@@ -136,7 +137,7 @@ namespace NDScript
             });
 
             new GeneralPrimitive("printLine", true,
-                (args, s, _, k) =>
+                (args, site, s, _, k) =>
             {
                 var state = s;
                 foreach (var item in args)

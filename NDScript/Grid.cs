@@ -87,7 +87,7 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             constructor = new GeneralPrimitive("grid", true,
-                (args, s, stack, k) =>
+                (args, site, s, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, constructor!);
                     var si = ArgumentTypeException.CastObject<ArrayExpression>(args[0], typeof(Array),
@@ -179,14 +179,14 @@ namespace NDScript
                     return (grid, Printing.PrintRaw(b.ToString(), state));
                 });
 
-            new DeterministicPrimitive<Grid, IEnumerable<object?>>("positionsOf", (s, g)
-                => g.CurrentContents(s).Select(p => p.Key));
+            new DeterministicPrimitive<Grid, IEnumerable<object?>>("positionsOf",
+                (site, stack, s, g) => g.CurrentContents(s).Select(p => p.Key));
 
-            new DeterministicPrimitive<Grid, object?[]>("nonsingletonPositionsOf", (s, g)
-                => g.CurrentContents(s).Where(p => !Collections.IsSingleton((ICollection<object?>)p.Value!))
+            new DeterministicPrimitive<Grid, object?[]>("nonsingletonPositionsOf", 
+                (site, stack, s, g) => g.CurrentContents(s).Where(p => !Collections.IsSingleton((ICollection<object?>)p.Value!))
                     .Select(p => p.Key).Cast<object?>().ToArray());
 
-            new DeterministicPrimitive<Position, Grid, object?[]>("neighborsOf", (s, p, g) => g.NeighborsOf(p, s).Cast<object?>().ToArray());
+            new DeterministicPrimitive<Position, Grid, object?[]>("neighborsOf", (site, stack, s, p, g) => g.NeighborsOf(p, s).Cast<object?>().ToArray());
         }
 
 

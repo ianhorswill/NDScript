@@ -22,7 +22,7 @@ namespace NDScript.Syntax
                 {
                     object? result = null;
                     State finalState = s;
-                    if (function.Call(actualArguments, state, 
+                    if (function.Call(actualArguments, this, state, 
                             new CallStack(function, actualArguments, caller),
                             (returnValue, fs) =>
                             {
@@ -33,7 +33,7 @@ namespace NDScript.Syntax
                         return k(result, finalState);
                     return false;
                 }
-                return function.Call(actualArguments, state, 
+                return function.Call(actualArguments, this, state, 
                     new CallStack(function, actualArguments, caller),
                     (returnValue, finalState) =>
                         k(returnValue, s.ReplaceGlobal(finalState.Global)));
@@ -53,7 +53,7 @@ namespace NDScript.Syntax
             {
                 function = fn as Function;
                 if (function == null)
-                    throw new Exception($"Attempt to call {Printing.Format(fn)}, which is not a function");
+                    throw new ExecutionException(this, caller, new Exception($"Attempt to call {Printing.Format(fn)}, which is not a function"));
                 if (actualArguments.Length == 0)
                     return DoCall(state);
                 return Arguments[0].Execute(state, caller, r, ArgEvaluated);

@@ -11,7 +11,7 @@ namespace NDScript
         {
             // ReSharper disable ObjectCreationAsStatement
             new GeneralPrimitive("setOf", true,
-                (args, s, _, k) =>
+                (args, site, s, _, k) =>
                     k(args.ToImmutableHashSet(), s));
 
             new DeterministicPrimitive<ImmutableHashSet<object?>, ImmutableHashSet<object?>, ImmutableHashSet<object?>>(
@@ -24,10 +24,10 @@ namespace NDScript
             // ReSharper restore ObjectCreationAsStatement
 
             _singletonValuePrimitive = new GeneralPrimitive("singletonValue", true,
-                (args, s, _, k) =>
+                (args, site, s, stack, k) =>
                 {
-                    ArgumentCountException.Check(1, args, _singletonValuePrimitive!);
-                    var set = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(args[0], "singletonValue", "set");
+                    ArgumentCountException.Check(1, args, _singletonValuePrimitive!, site, stack);
+                    var set = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(args[0], "singletonValue", "set", site, stack);
                     return Collections.IsSingleton(set) && k(set.First(), s);
                 });
         }

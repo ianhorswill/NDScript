@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace NDScript
 {
@@ -20,7 +21,7 @@ namespace NDScript
         internal static void MakePrimitives()
         {
             Minimize = new GeneralPrimitive("minimize", true,
-                (args, state, stack, k) =>
+                (args, callSite, state, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, Minimize!);
                     var function = ArgumentTypeException.Cast<Function>(args[0], Minimize!.Name, "function");
@@ -31,7 +32,7 @@ namespace NDScript
                     object? result = null;
                     var succeeded = false;
                     while (!function.Call(
-                               Array.Empty<object?>(),
+                               Array.Empty<object?>(), callSite,
                                state,
                                new CallStack(Minimize, args, stack),
                                (value, newState) =>
@@ -55,7 +56,7 @@ namespace NDScript
 
             Cost = new GeneralPrimitive(
                 "cost", false,
-                (args, state, _, k) =>
+                (args, callSite, state, _, k) =>
                 {
                     ArgumentCountException.Check(1, args, Cost!);
                     var cost = ArgumentTypeException.Cast<int>(args[0], Cost!.Name, "cost");

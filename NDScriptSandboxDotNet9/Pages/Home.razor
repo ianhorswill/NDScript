@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Text
 @using System.Web
 @using NDScript;
 @using Task = System.Threading.Tasks.Task
@@ -108,6 +109,38 @@
         {
             output = (MarkupString)NDScript.ProgramOutput(await JS.InvokeAsync<string>("GetUserCode"));
             outputHeading = "Output";
+        }
+        catch (ExecutionException e)
+        {
+            outputHeading = $"Error at line {e.AstNode.SourceLine}";
+            if (e.Stack == null)
+                output = output = (MarkupString)$"<div style=\"color: orange\">{e.InnerException!.Message}</div>";
+            else
+            {
+                var b = new StringBuilder();
+                for (var frame = e.Stack; frame != null; frame = frame.Parent)
+                {
+                    b.Append("<li> <b>");
+                    b.Append(frame.Function.Name);
+                    b.Append("</b>");
+                    b.Append('(');
+                    var first = true;
+                    foreach (var a in frame.Arguments)
+                    {
+                        if (first)
+                            first = false;
+                        else
+                            b.Append(", ");
+                        b.Append(HttpUtility.HtmlEncode(Printing.Format(a, true)));
+                    }
+
+                    b.AppendLine(")");
+                }
+                var stack = string.Join('\n', e.Stack?.ToString()
+                    .Split('n', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(f => $"<li> {HttpUtility.HtmlEncode(f)} ") ?? Array.Empty<string>());
+                output = (MarkupString)$"<div style=\"color: orange\">{e.InnerException!.Message}</div><b>Call stack:</b><ul>{b}</ul>";
+            }
         }
         catch (Sprache.ParseException e)
         {
