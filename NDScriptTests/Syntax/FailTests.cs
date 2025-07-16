@@ -9,7 +9,7 @@ namespace NDScriptTests.Syntax
         [TestMethod()]
         public void ExecuteTest()
         {
-            Assert.IsFalse(new Fail().Execute(State.Default, null, (v,s)=> true, (v,s) => true));
+            Assert.IsFalse(new Fail(0).Execute(State.Default, null, (v,s)=> true, (v,s) => true));
         }
     }
 }

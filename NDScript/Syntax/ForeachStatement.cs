@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class ForeachStatement(string variable, Expression collection, Statement body) : Expression([collection, body])
+    public class ForeachStatement(int sourceLine, string variable, Expression collection, Statement body) : Expression(sourceLine, [collection, body])
     {
         public readonly StateElement Variable = StateElement.Intern(variable);
         public readonly Expression Collection = collection;

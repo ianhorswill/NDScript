@@ -4,7 +4,7 @@ using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
-    public class GridReference(Expression array, Expression x, Expression y) : SettableExpression([array, x, y])
+    public class GridReference(int sourceLine, Expression array, Expression x, Expression y) : SettableExpression(sourceLine, [array, x, y])
     {
         public readonly Expression Array = array;
         public readonly Expression X = x;

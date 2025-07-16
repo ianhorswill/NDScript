@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class VariableDeclaration(string name, Expression value) : Expression([value])
+    public class VariableDeclaration(int sourceLine, string name, Expression value) : Expression(sourceLine, [value])
     {
         public readonly StateElement Name = (StateElement)name;
         public readonly Expression Value = value;

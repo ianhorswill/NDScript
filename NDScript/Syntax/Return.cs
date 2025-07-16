@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class Return(Expression value) : Expression([value])
+    public class Return(int sourceLine, Expression value) : Expression(sourceLine, [value])
     {
         public readonly Expression Value = value;
 

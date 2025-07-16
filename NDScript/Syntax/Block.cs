@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class Block(Statement[] statements) : Statement(statements)
+    public class Block(int sourceLine, Statement[] statements) : Statement(sourceLine, statements)
     {
         public readonly Statement[] Statements = statements;
 

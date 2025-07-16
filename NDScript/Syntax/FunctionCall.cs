@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace NDScript.Syntax
 {
-    public class FunctionCall(Expression func, Expression[] arguments) : Expression(arguments.Append(func).Cast<AstNode>().ToArray())
+    public class FunctionCall(int sourceLine, Expression func, Expression[] arguments) : Expression(sourceLine, arguments.Append(func).Cast<AstNode>().ToArray())
     {
         public readonly Expression Function = func;
         public readonly Expression[] Arguments = arguments;

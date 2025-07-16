@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class UnaryOperatorExpression(Func<object?, object?> operation, Expression argument) : Expression([argument])
+    public class UnaryOperatorExpression(int sourceLine, Func<object?, object?> operation, Expression argument) : Expression(sourceLine, [argument])
     {
         public readonly Func<object?, object?> Operation = operation;
         public readonly Expression Argument = argument;

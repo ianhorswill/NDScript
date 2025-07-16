@@ -3,7 +3,7 @@ using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
-    public class FunctionDeclaration(string name, bool isDeterministic, string[] arguments, Block body) : Statement([body])
+    public class FunctionDeclaration(int sourceLine, string name, bool isDeterministic, string[] arguments, Block body) : Statement(sourceLine, [body])
     {
         public readonly string Name = name;
         public readonly bool IsDeterministic = isDeterministic;

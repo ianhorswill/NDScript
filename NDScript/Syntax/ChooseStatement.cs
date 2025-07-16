@@ -2,9 +2,9 @@
 
 namespace NDScript.Syntax
 {
-    public class ChooseStatement(Statement[] options, bool chooseFirst) 
+    public class ChooseStatement(int sourceLine, Statement[] options, bool chooseFirst) 
         // ReSharper disable once CoVariantArrayConversion
-        : Statement(options)
+        : Statement(sourceLine, options)
     {
         public static readonly Random Random = new();
 

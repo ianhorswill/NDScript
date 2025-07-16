@@ -4,7 +4,7 @@ using static NDScript.NDScript;
 namespace NDScript.Syntax
 {
     // ReSharper disable once CoVariantArrayConversion
-    public class ArrayExpression(Expression[] elements) : Expression(elements)
+    public class ArrayExpression(int sourceLine, Expression[] elements) : Expression(sourceLine, elements)
     {
         public readonly Expression[] Elements = elements;
         public override bool Execute(State s, CallStack?  stack, Continuation r, Continuation k)

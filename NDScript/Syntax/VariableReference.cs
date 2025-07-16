@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class VariableReference(string name) : SettableExpression([])
+    public class VariableReference(int sourceLine, string name) : SettableExpression(sourceLine, [])
     {
         public readonly StateElement Name = (StateElement)name;
 

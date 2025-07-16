@@ -1,7 +1,7 @@
 ﻿namespace NDScript.Syntax
 {
     // ReSharper disable once CoVariantArrayConversion
-    public class ChooseExpression(Expression[] alternatives) : Expression(alternatives)
+    public class ChooseExpression(int sourceLine, Expression[] alternatives) : Expression(sourceLine, alternatives)
     {
         public readonly Expression[] Alternatives = alternatives;
         public override bool Execute(State s, CallStack? stack, NDScript.Continuation r, NDScript.Continuation k)

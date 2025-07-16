@@ -6,10 +6,11 @@ using static NDScript.NDScript;
 namespace NDScript.Syntax
 {
     public class BinaryOperatorExpression(
+        int sourceLine, 
         Func<object?, object?, object?> operation,
         Expression leftArgument,
         Expression rightArgument)
-        : Expression([leftArgument, rightArgument])
+        : Expression(sourceLine, [leftArgument, rightArgument])
     {
         public readonly Func<object?, object?, object?> Operation = operation;
         public readonly Expression LeftArgument = leftArgument;

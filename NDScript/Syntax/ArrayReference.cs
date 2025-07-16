@@ -4,7 +4,7 @@ using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
-    public class ArrayReference(Expression array, Expression index) : SettableExpression([array, index])
+    public class ArrayReference(int sourceLine, Expression array, Expression index) : SettableExpression(sourceLine, [array, index])
     {
         public readonly Expression Array = array;
         public readonly Expression Index = index;

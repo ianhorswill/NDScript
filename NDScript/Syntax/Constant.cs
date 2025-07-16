@@ -2,7 +2,7 @@
 
 namespace NDScript.Syntax
 {
-    public class Constant(object? value) : Expression([])
+    public class Constant(int sourceLine, object? value) : Expression(sourceLine, [])
     {
         public readonly object? Value = value;
 

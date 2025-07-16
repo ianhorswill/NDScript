@@ -10,11 +10,13 @@ namespace NDScript.Syntax
     public abstract class AstNode
     {
         public abstract bool Execute(State s, CallStack? stack, Continuation r, Continuation k);
+        public readonly int SourceLine;
         public readonly AstNode[] Children;
 
-        protected AstNode(AstNode[] children)
+        protected AstNode(int lineNumber, AstNode[] children)
         {
             Children = children;
+            SourceLine = lineNumber;
         }
 
         public void Walk<T>(Action<T> thunk) where T : AstNode

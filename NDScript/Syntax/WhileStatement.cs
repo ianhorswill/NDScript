@@ -3,8 +3,8 @@ using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
-    public class WhileStatement(Expression condition, Statement body) 
-        : Statement([condition, body])
+    public class WhileStatement(int sourceLine, Expression condition, Statement body) 
+        : Statement(sourceLine, [condition, body])
     {
         public readonly Expression Condition = condition;
         public readonly Statement Body = body;

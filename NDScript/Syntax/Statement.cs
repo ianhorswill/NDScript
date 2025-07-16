@@ -1,4 +1,4 @@
 ﻿namespace NDScript.Syntax
 {
-    public abstract class Statement(AstNode[] children) : AstNode(children);
+    public abstract class Statement(int sourceLine, AstNode[] children) : AstNode(sourceLine, children);
 }

@@ -1,6 +1,6 @@
 ﻿namespace NDScript.Syntax
 {
-    public class AssignmentExpression(SettableExpression lvalue, Expression value) : Expression([lvalue, value])
+    public class AssignmentExpression(int sourceLine, SettableExpression lvalue, Expression value) : Expression(sourceLine, [lvalue, value])
     {
         public readonly SettableExpression LValue = lvalue;
         public readonly Expression Value = value;

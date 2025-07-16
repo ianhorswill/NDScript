@@ -3,10 +3,11 @@
 namespace NDScript.Syntax
 {
     public class ShortCircuitOperatorExpression(
+        int sourceLine, 
         bool idempotentValue,
         Expression leftArgument,
         Expression rightArgument)
-        : Expression([leftArgument, rightArgument])
+        : Expression(sourceLine, [leftArgument, rightArgument])
     {
         public readonly bool IdempotentValue = idempotentValue;
         public readonly Expression LeftArgument = leftArgument;

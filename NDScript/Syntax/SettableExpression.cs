@@ -3,7 +3,7 @@ using static NDScript.NDScript;
 
 namespace NDScript.Syntax
 {
-    public abstract class SettableExpression(Expression[] subexpressions) : Expression(subexpressions)
+    public abstract class SettableExpression(int sourceLine, Expression[] subexpressions) : Expression(sourceLine, subexpressions)
     {
         public abstract bool Set(object? value, State s, CallStack? stack, Continuation r, Continuation k);
 

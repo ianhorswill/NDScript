@@ -41,7 +41,7 @@ namespace NDScript
                 return true;
             }
 
-            if (!new Block(statements).Execute(State.Default, null, Done, Done))
+            if (!new Block(1, statements).Execute(State.Default, null, Done, Done))
                 throw new Exception("Program failed");
             return result;
         }
@@ -60,7 +60,7 @@ namespace NDScript
 
             Minimization.RemoveBudgetConstraints();
 
-            if (!new Block(statements).Execute(State.Default, null, Done, Done))
+            if (!new Block(1, statements).Execute(State.Default, null, Done, Done))
                 throw new Exception("Program failed");
             return result;
         }

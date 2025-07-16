@@ -2,8 +2,8 @@
 
 namespace NDScript.Syntax
 {
-    public class IfStatement(Expression condition, Statement consequent, Statement? alternative) 
-        : Statement(alternative == null?[condition, consequent]:[condition, consequent, alternative])
+    public class IfStatement(int sourceLine, Expression condition, Statement consequent, Statement? alternative) 
+        : Statement(sourceLine, alternative == null?[condition, consequent]:[condition, consequent, alternative])
     {
         public readonly Expression Condition = condition;
         public readonly Statement Consequent = consequent;
