@@ -12,6 +12,7 @@ namespace NDScript
             Minimization.MakePrimitives();
             Grid.MakePrimitives();
             Sets.MakePrimitives();
+            Queue.MakePrimitives();
             Collections.MakePrimitives();
             Relation.MakePrimitives();
         }

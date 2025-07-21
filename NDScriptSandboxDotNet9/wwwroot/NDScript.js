@@ -45,7 +45,8 @@ hljs.registerLanguage('ndscript', function () {
                 'printGrid', 'printTilemap', 'printTilesetMap', 'grid', 'makeGrid', 'positionsOf', 'neighborsOf',
                 'isSingleton', 'isEmpty', 'sizeOf', 'contains', 'chooseElement',
                 'setOf', 'union', 'intersection', 'singletonValue', 'nonsingletonPositions',
-                'relation', 'leftImage', 'rightImage'
+                'relation', 'leftImage', 'rightImage',
+                'queue', 'enqueue', 'dequeue'
             ],
             keyword: ['if', 'while', 'else', 'or',
                 'choose', 'choose\\s+first', 'deterministic',
