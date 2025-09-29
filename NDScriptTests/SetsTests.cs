@@ -82,5 +82,29 @@ namespace NDScriptTests
             Assert.IsTrue(choose1 > 30);
             Assert.IsTrue(choose2 > 30);
         }
+
+        [TestMethod]
+        public void WeightedChooseElement()
+        {
+            var chooseA = 0;
+            var chooseB = 0;
+            var output = "";
+            for (int i = 0; i < 100; i++)
+                switch (output = ProgramOutput("print(chooseElement(setOf(\"a\",\"b\"), {a: 1, b: 2}));"))
+                {
+                    case "a":
+                        chooseA++;
+                        break;
+
+                    case "b":
+                        chooseB++;
+                        break;
+
+                    default:
+                        throw new Exception($"Invalid program output: {output}");
+                }
+            Assert.IsTrue(chooseA < 40);
+            Assert.IsTrue(chooseB > 60);
+        }
     }
 }

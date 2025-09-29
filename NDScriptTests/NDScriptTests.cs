@@ -6,6 +6,30 @@ namespace NDScriptTests
     public class IntegrationTests
     {
         [TestMethod]
+        public void PersonalityGeneratorTest()
+        {
+            for (var i=0; i < 20; i++)
+                Console.WriteLine(ProgramOutput(@"var traits = [ ""bookworm"", ""outgoing"", ""shy"", ""goody two-shoes"" ];
+var nogoods = [ [""shy"", ""outgoing""] ];
+
+function violates(set, nogood) {
+	foreach (x in nogood)
+		if (!contains(x, set)) return false;
+	return true;
+}
+
+function makePersonality() {
+	var p = setOf(chooseElement(traits), chooseElement(traits), chooseElement(traits));
+	if (sizeOf(p) != 3) fail;
+	foreach (nogood in nogoods)
+		if (violates(p, nogood)) fail;
+	return p;
+}
+print(makePersonality());
+"));
+        }
+
+        [TestMethod]
         public void MineBumbler()
         {
             var s = ProgramOutput(bumbler);

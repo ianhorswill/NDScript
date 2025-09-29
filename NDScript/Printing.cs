@@ -94,6 +94,25 @@ namespace NDScript
                     break;
                 }
 
+                case ImmutableDictionary<string, object?> obj:
+                {
+                    b.Append("{");
+                    var first = true;
+                    foreach (var f in obj)
+                    {
+                        if (first)
+                            first = false;
+                        else
+                            b.Append(", ");
+                        Format(f.Key, b, false);
+                        b.Append(": ");
+                        Format(f.Value, b, true);
+                    }
+
+                    b.Append("}");
+                    break;
+                }
+
                 case IList l:
                 {
                     b.Append("[");

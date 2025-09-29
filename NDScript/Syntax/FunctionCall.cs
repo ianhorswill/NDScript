@@ -12,7 +12,6 @@ namespace NDScript.Syntax
 
         public override bool Execute(State s, CallStack? caller, NDScript.Continuation r, NDScript.Continuation k)
         {
-            var argIndex = 0;
             var actualArguments = new object?[Arguments.Length];
             Function? function;
 
@@ -39,11 +38,13 @@ namespace NDScript.Syntax
                         k(returnValue, s.ReplaceGlobal(finalState.Global)));
             }
 
-            bool ArgEvaluated(object? value, State newState)
+            bool ArgEvaluated(int argIndex, object? value, State newState)
             {
-                actualArguments[argIndex++] = value;
-                if (argIndex < Arguments.Length)
-                    return Arguments[argIndex].Execute(newState, caller, r, ArgEvaluated);
+                actualArguments[argIndex] = value;
+                var next = argIndex + 1;
+                if (next < actualArguments.Length)
+                    return Arguments[next].Execute(newState, caller, r, 
+                        (v,s) => ArgEvaluated(next, v, s));
 
                 // Actually call it
                 return DoCall(newState);
@@ -56,7 +57,8 @@ namespace NDScript.Syntax
                     throw new ExecutionException(this, caller, new Exception($"Attempt to call {Printing.Format(fn)}, which is not a function"));
                 if (actualArguments.Length == 0)
                     return DoCall(state);
-                return Arguments[0].Execute(state, caller, r, ArgEvaluated);
+
+                return Arguments[0].Execute(state, caller, r, (v,s) => ArgEvaluated(0, v, s));
             });
         }
     }

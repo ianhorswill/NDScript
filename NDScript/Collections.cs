@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using NDScript.Syntax;
 
 namespace NDScript
@@ -14,7 +14,7 @@ namespace NDScript
         public static bool IsSingleton(ICollection<object?> set) => set.Count == 1;
         public static bool IsEmpty(ICollection<object?> set) => set.Count == 0;
 
-        public static IList ConvertToList(object? value, State s, string errorMessage, AstNode? site = null, CallStack? stack = null)
+        public static IList<object?> ConvertToList(object? value, State s, string errorMessage, AstNode? site = null, CallStack? stack = null)
         {
             switch (value)
             {
@@ -22,7 +22,7 @@ namespace NDScript
                     return (ImmutableArray<object?>)s.Global[
                         ArgumentTypeException.CastObject<ArrayExpression>(value, typeof(IList), errorMessage, site,
                             stack)]!;
-                case IList l:
+                case IList<object?> l:
                     return l;
                 case IEnumerable<object?> ie:
                     return new List<object?>(ie);
@@ -32,26 +32,40 @@ namespace NDScript
             }
         }
 
-        private static GeneralPrimitive? chooseElement;
+        private static GeneralPrimitive? _chooseElement;
 
         internal static void MakePrimitives()
         {
-            chooseElement = new GeneralPrimitive(
+            _chooseElement = new GeneralPrimitive(
                 "chooseElement", false,
                 (args, site, state, stack, k) =>
                 {
-                    ArgumentCountException.Check(1, args, chooseElement!, site, stack);
+                    var argCount = args.Length;
+                    if (argCount == 0 || argCount > 2)
+                        ArgumentCountException.Check(2, args, _chooseElement!, site, stack);
                     var collection = ConvertToList(args[0], state, "Argument to chooseElement() is not a collection");
-                    if (collection is not object?[] elements)
+                    var weights = argCount == 2
+                        ? ArgumentTypeException.Cast<ImmutableDictionary<string, object?>>(args[1], "chooseElement", "weights",
+                            site, stack):null;
+
+                    var elements = collection!.Select(e => new KeyValuePair<float,object?>(1,e)).ToArray();
+                    if (weights != null)
                     {
-                        elements = new object?[collection.Count];
-                        collection.CopyTo(elements, 0);
+                        for (var i = 0; i < elements.Length; i++)
+                        {
+                            var weight = weights[(string)elements[i].Value!];
+                            elements[i] = new KeyValuePair<float, object?>(
+                                (float)Math.Pow(ChooseStatement.Random.NextDouble(), 1 / Convert.ToSingle(weight)),
+                                elements[i].Value);
+                        }
+
+                        Array.Sort(elements, (a,b) => -(a.Key.CompareTo(b.Key)));
                     }
 
-                    var offset = ChooseStatement.Random.Next(elements.Length);
+                    var offset = weights==null?ChooseStatement.Random.Next(elements.Length):0;
                     for (var count = 0; count < elements.Length; count++)
                     {
-                        var e = elements[(count + offset) % elements.Length];
+                        var e = elements[(count + offset) % elements.Length].Value;
                         if (k(e, state))
                             return true;
                     }

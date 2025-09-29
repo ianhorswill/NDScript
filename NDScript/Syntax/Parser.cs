@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using Sprache;
 
@@ -109,6 +108,18 @@ namespace NDScript.Syntax
                 from elements in Bracketed('[', Expression.CommaSeparatedList(), ']')
             select new ArrayExpression(line, elements.ToArray())).Named("array expression");
 
+        private static readonly Parser<KeyValuePair<string, Expression>> FieldDefinition =
+            (from line in LineNumber
+                from key in Identifier.Token()
+                from _ in Parse.String(":").Token()
+                from value in Expression.Token().Commit()
+                select new KeyValuePair<string, Expression>(key, value)).Named("object field definition");
+
+        public static readonly Parser<Expression> ObjectExpression =
+            (from line in LineNumber
+                from elements in Bracketed('{', FieldDefinition.CommaSeparatedList(), '}')
+                select new ObjectExpression(line, elements.ToArray())).Named("object expression");
+
         private static readonly Parser<string> Identifier =
             (from id in Parse.Identifier(Parse.Letter, Parse.LetterOrDigit).Token()
                 where !Keywords.Contains(id)
@@ -148,7 +159,7 @@ namespace NDScript.Syntax
                 from alternatives in Arglist
                 select new ChooseExpression(line, alternatives.ToArray())).Named("choose expression");
 
-        public static readonly Parser<Expression> PrimitiveExpression = Literal.Or(ArrayExpression).Or(ChooseExpression).Or(VariableReference).Or(FailExpression).Or(Parenthesized(Expression));
+        public static readonly Parser<Expression> PrimitiveExpression = Literal.Or(ArrayExpression).Or(ChooseExpression).Or(ObjectExpression).Or(VariableReference).Or(FailExpression).Or(Parenthesized(Expression));
         #endregion
 
         #region Postfix expression
@@ -314,7 +325,7 @@ namespace NDScript.Syntax
 
         private static Parser<bool> DeterminismTag = (Parse.String("deterministic").Return(true)).Or(Parse.Return(false));
 
-        public static readonly Parser<FunctionDeclaration> FunctionDefinition =
+        public static readonly Parser<Statement> FunctionDefinition =
             (from line in LineNumber
                 from det in DeterminismTag
                 from _ in Parse.String("function").Token()
@@ -373,6 +384,6 @@ namespace NDScript.Syntax
         #endregion
 
         private static readonly Parser<Statement> RealStatement =
-            SimpleStatement.Or(Block).Or(FunctionDefinition).Or(IfStatement).Or(WhileStatement).Or(ChooseStatement).Or(ForeachStatement).Named("statement");
+            FunctionDefinition.Or(Block).Or(IfStatement).Or(WhileStatement).Or(ChooseStatement).Or(ForeachStatement).Or(SimpleStatement).Named("statement");
     }
 }
