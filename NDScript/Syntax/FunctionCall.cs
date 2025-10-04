@@ -54,7 +54,7 @@ namespace NDScript.Syntax
             {
                 function = fn as Function;
                 if (function == null)
-                    throw new ExecutionException(this, caller, new Exception($"Attempt to call {Printing.Format(fn)}, which is not a function"));
+                    throw new ExecutionException(this, state, caller, new Exception($"Attempt to call {Printing.Format(fn, state)}, which is not a function"));
                 if (actualArguments.Length == 0)
                     return DoCall(state);
 

@@ -13,7 +13,7 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(0, arguments, this, callSite, stack);
+            ArgumentCountException.Check(0, arguments, this, s, callSite, stack);
             var result = Implementation(callSite, stack, s);
             return k(result.Result, result.NewState);
         }
@@ -29,9 +29,9 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(1, arguments, this);
+            ArgumentCountException.Check(1, arguments, this, s, callSite, stack);
             var result = Implementation(callSite, stack, 
-                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1", callSite, stack),
+                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1", s, callSite, stack),
                 s);
             return k(result.Result, result.NewState);
         }
@@ -47,10 +47,10 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(2, arguments, this, callSite, stack);
+            ArgumentCountException.Check(2, arguments, this, s, callSite, stack);
             var result = Implementation(callSite, stack, 
-                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1", callSite, stack),
-                ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "arg 2", callSite, stack),
+                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1", s, callSite, stack),
+                ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "arg 2", s, callSite, stack),
                 s);
             return k(result.Result, result.NewState);
         }
@@ -66,11 +66,11 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(3, arguments, this, callSite, stack);
+            ArgumentCountException.Check(3, arguments, this, s, callSite, stack);
             var result = Implementation(callSite, stack, 
-                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1", callSite, stack),
-                ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "arg 2", callSite, stack),
-                ArgumentTypeException.Cast<TIn3>(arguments[2], Name, "arg 3", callSite, stack),
+                ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "arg 1", s, callSite, stack),
+                ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "arg 2", s, callSite, stack),
+                ArgumentTypeException.Cast<TIn3>(arguments[2], Name, "arg 3", s, callSite, stack),
                 s);
             return k(result.Result, result.NewState);
         }

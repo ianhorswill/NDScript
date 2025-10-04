@@ -12,7 +12,7 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(0, arguments, this, callSite, stack);
+            ArgumentCountException.Check(0, arguments, this, s, callSite, stack);
             return k(Implementation(callSite, stack, s), s);
         }
     }
@@ -27,8 +27,8 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(1, arguments, this);
-            var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1", callSite, stack);
+            ArgumentCountException.Check(1, arguments, this, s, callSite, stack);
+            var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1", s, callSite, stack);
             return k(Implementation(callSite, stack, s, arg1), s);
         }
     }
@@ -43,9 +43,9 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(2, arguments, this, callSite, stack);
-            var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1", callSite, stack);
-            var arg2 = ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "2", callSite, stack);
+            ArgumentCountException.Check(2, arguments, this, s, callSite, stack);
+            var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1", s, callSite, stack);
+            var arg2 = ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "2", s, callSite, stack);
             return k(Implementation(callSite, stack, s, arg1, arg2), s);
         }
     }
@@ -60,10 +60,10 @@ namespace NDScript
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack,
             NDScript.Continuation k)
         {
-            ArgumentCountException.Check(2, arguments, this, callSite, stack);
-            var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1", callSite, stack);
-            var arg2 = ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "2", callSite, stack);
-            var arg3 = ArgumentTypeException.Cast<TIn3>(arguments[2], Name, "3", callSite, stack);
+            ArgumentCountException.Check(2, arguments, this, s, callSite, stack);
+            var arg1 = ArgumentTypeException.Cast<TIn1>(arguments[0], Name, "1", s, callSite, stack);
+            var arg2 = ArgumentTypeException.Cast<TIn2>(arguments[1], Name, "2", s, callSite, stack);
+            var arg3 = ArgumentTypeException.Cast<TIn3>(arguments[2], Name, "3", s, callSite, stack);
             return k(Implementation(callSite, stack, s,arg1, arg2, arg3), s);
         }
     }

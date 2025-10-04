@@ -23,7 +23,7 @@ namespace NDScript
         {
             var current = CurrentContents(s);
             if (current.IsEmpty)
-                throw new ExecutionException(site, stack, new InvalidOperationException("Dequeue from empty queue"));
+                throw new ExecutionException(site, s, stack, new InvalidOperationException("Dequeue from empty queue"));
             var newQueue = current.Dequeue(out var next);
             return (next, s.SetGlobal(Contents, newQueue));
         }

@@ -131,7 +131,7 @@
                             first = false;
                         else
                             b.Append(", ");
-                        b.Append(HttpUtility.HtmlEncode(Printing.Format(a, true)));
+                        b.Append(HttpUtility.HtmlEncode(Printing.Format(a, e.State, true)));
                     }
 
                     b.AppendLine(")");

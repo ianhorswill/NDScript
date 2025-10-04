@@ -20,12 +20,12 @@ namespace NDScript.Syntax
                 argIndex++;
                 if (argIndex < Fields.Length)
                     return Fields[argIndex].Value.Execute(newState, stack, r, ElementEvaluated);
-                return k(actualElements.ToImmutableDictionary(), newState);
+                return k(new CompoundObject(actualElements.ToImmutableDictionary()), newState);
             }
 
             if (Fields.Length == 0)
             {
-                return k(ImmutableDictionary<string,object?>.Empty, s);
+                return k(new CompoundObject(ImmutableDictionary<string,object?>.Empty), s);
             }
             return Fields[0].Value.Execute(s, stack, r, ElementEvaluated);
         }

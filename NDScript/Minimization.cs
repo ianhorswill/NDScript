@@ -23,8 +23,8 @@ namespace NDScript
             Minimize = new GeneralPrimitive("minimize", true,
                 (args, callSite, state, stack, k) =>
                 {
-                    ArgumentCountException.Check(1, args, Minimize!);
-                    var function = ArgumentTypeException.Cast<Function>(args[0], Minimize!.Name, "function", callSite, stack);
+                    ArgumentCountException.Check(1, args, Minimize!, state);
+                    var function = ArgumentTypeException.Cast<Function>(args[0], Minimize!.Name, "function", state, callSite, stack);
                     var save = Budget;
                     Budget = 0;
                     InsufficientBudget = false;
@@ -58,8 +58,8 @@ namespace NDScript
                 "cost", false,
                 (args, callSite, state, _, k) =>
                 {
-                    ArgumentCountException.Check(1, args, Cost!);
-                    var cost = ArgumentTypeException.Cast<int>(args[0], Cost!.Name, "cost");
+                    ArgumentCountException.Check(1, args, Cost!, state);
+                    var cost = ArgumentTypeException.Cast<int>(args[0], Cost!.Name, "cost", state);
                     if (cost > Budget)
                     {
                         InsufficientBudget = true;

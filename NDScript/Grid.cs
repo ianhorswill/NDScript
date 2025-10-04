@@ -47,7 +47,7 @@ namespace NDScript
                 // StateElement objects.  We have to look up the value of that state element to get the
                 // actual array representing a given row.
                 var si = ArgumentTypeException.CastObject<ArrayExpression>(rows[i], typeof(Array),
-                    "Row initializer for grid was not an array.");
+                    "Row initializer for grid was not an array.", State.Default);
                 return (ImmutableArray<object?>)s.Global[si]!;
             }
 
@@ -89,9 +89,9 @@ namespace NDScript
             constructor = new GeneralPrimitive("grid", true,
                 (args, site, s, stack, k) =>
                 {
-                    ArgumentCountException.Check(1, args, constructor!);
+                    ArgumentCountException.Check(1, args, constructor!, s);
                     var si = ArgumentTypeException.CastObject<ArrayExpression>(args[0], typeof(Array),
-                        "Initializer for grid should be an array of arrays");
+                        "Initializer for grid should be an array of arrays", s);
                     var gridInfo = MakeGrid(s, (ImmutableArray<object?>)s[si]!);
                     return k(gridInfo.grid, gridInfo.state);
                 });
@@ -122,7 +122,7 @@ namespace NDScript
                         {
                             if (Printing.HtmlOutput)
                                 b.Append("<td>");
-                            Printing.Format(grid.GetCell(x, y, state), b);
+                            Printing.Format(grid.GetCell(x, y, state), b, state);
                             if (Printing.HtmlOutput)
                                 b.Append("</td>");
                         }
@@ -152,6 +152,7 @@ namespace NDScript
                             var cell = ArgumentTypeException.Cast<string>(
                                 grid.GetCell(x, y, state),
                                 "printTilemap", "grid element",
+                                state,
                                 site,
                                 stack);   
                             b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(cell)}\">");
@@ -178,12 +179,12 @@ namespace NDScript
                         {
                             var tileSet = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(
                                 grid.GetCell(x, y, state),
-                                "printTilesetMap", "grid element", site, stack);
+                                "printTilesetMap", "grid element", state, site, stack);
                             var tile = Collections.IsSingleton(tileSet) ? ArgumentTypeException.Cast<string>(
                                     tileSet.First(),
                                     "printTilesetMap",
                                     "grid tileset element",
-                                    site, stack)
+                                    state, site, stack)
                                 : defaultTile;
                             b.Append($"<img src=\"{Printing.AddImageExtensionIfNecessary(tile)}\">");
                         }

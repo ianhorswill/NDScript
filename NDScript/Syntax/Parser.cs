@@ -183,7 +183,13 @@ namespace NDScript.Syntax
                 };
             });
 
-        private static readonly Parser<Func<Expression, Expression>> PostfixModifier = FunctionCall.Or(ArrayReference);
+        private static readonly Parser<Func<Expression, Expression>> MemberReference =
+            from line in LineNumber
+            from _ in Parse.String(".").Token()
+            from memberName in Identifier
+            select (Func<Expression,Expression>)(e => new MemberReference(line,e,memberName));
+
+        private static readonly Parser<Func<Expression, Expression>> PostfixModifier = FunctionCall.Or(ArrayReference).Or(MemberReference);
 
         public static readonly Parser<Expression> PosfixExpression =
             from e in PrimitiveExpression
@@ -212,9 +218,9 @@ namespace NDScript.Syntax
         #endregion
 
         #region Multiplicative expression
-        private static readonly Parser<Func<object?, object?, object?>> Times =
+        private static readonly Parser<Func<object?, object?, State, object?>> Times =
             Parse.Char('*').Return(BinaryOperatorExpression.Multiply).Token();
-        private static readonly Parser<Func<object?, object?, object?>> Divide =
+        private static readonly Parser<Func<object?, object?, State, object?>> Divide =
             Parse.Char('/').Return(BinaryOperatorExpression.Divide).Token();
 
         public static readonly Parser<Expression> MultiplicativeExpression =
@@ -225,9 +231,9 @@ namespace NDScript.Syntax
         #endregion
 
         #region AdditiveExpression
-        private static readonly Parser<Func<object?, object?, object?>> Plus =
+        private static readonly Parser<Func<object?, object?, State, object?>> Plus =
             Parse.Char('+').Return(BinaryOperatorExpression.Add).Token();
-        private static readonly Parser<Func<object?, object?, object?>> Minus =
+        private static readonly Parser<Func<object?, object?, State, object?>> Minus =
             Parse.Char('-').Return(BinaryOperatorExpression.Subtract).Token();
 
         public static readonly Parser<Expression> AdditiveExpression =
@@ -238,7 +244,7 @@ namespace NDScript.Syntax
         #endregion
 
         #region Relational expression
-        private static readonly Parser<Func<object?, object?, object?>> RelationalOperator =
+        private static readonly Parser<Func<object?, object?, State, object?>> RelationalOperator =
             (Parse.String("<=").Return(BinaryOperatorExpression.Le)).Or((Parse.String(">=").Return(BinaryOperatorExpression.Ge)))
             .Or((Parse.Char('<').Return(BinaryOperatorExpression.Lt)))
             .Or((Parse.Char('>').Return(BinaryOperatorExpression.Lt))).Token().Named("relational operator");
@@ -258,7 +264,7 @@ namespace NDScript.Syntax
         #endregion
 
         #region Equality expression
-        private static readonly Parser<Func<object?, object?, object?>> EqualityOperator =
+        private static readonly Parser<Func<object?, object?, State, object?>> EqualityOperator =
             (Parse.String("==").Return(BinaryOperatorExpression.Eq)
                 .Or((Parse.String("!=").Return(BinaryOperatorExpression.Neq)))).Token().Named("relational operator");
 

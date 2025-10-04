@@ -13,7 +13,8 @@ namespace NDScript.Syntax
             Condition.Execute(s, stack, r, (c, ns) =>
             {
                 if (!(c is bool b))
-                    throw new ExecutionException(this, stack, new ArgumentException($"Condition in if statement is not a Boolean"));
+                    throw new ExecutionException(this, ns, stack,
+                        new ArgumentException($"Condition in if statement is not a Boolean"));
                 return b ? Body.Execute(ns, stack, r, (_, nns) => Execute(nns, stack, r, k)) : k(null, ns);
             });
     }

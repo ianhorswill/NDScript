@@ -26,8 +26,8 @@ namespace NDScript
             _singletonValuePrimitive = new GeneralPrimitive("singletonValue", true,
                 (args, site, s, stack, k) =>
                 {
-                    ArgumentCountException.Check(1, args, _singletonValuePrimitive!, site, stack);
-                    var set = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(args[0], "singletonValue", "set", site, stack);
+                    ArgumentCountException.Check(1, args, _singletonValuePrimitive!, s, site, stack);
+                    var set = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(args[0], "singletonValue", "set", s, site, stack);
                     return Collections.IsSingleton(set) && k(set.First(), s);
                 });
         }

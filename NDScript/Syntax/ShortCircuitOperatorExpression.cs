@@ -18,7 +18,7 @@ namespace NDScript.Syntax
         public override bool Execute(State s, CallStack? stack, Continuation r, Continuation k) 
             => LeftArgument.Execute(s, stack, r,
                 (left, newState) => 
-                    IdempotentValue == ArgumentTypeException.Cast<bool>(left, OperatorName, "left") 
+                    IdempotentValue == ArgumentTypeException.Cast<bool>(left, OperatorName, "left", newState) 
                         ? k(left, newState) 
                         : RightArgument.Execute(newState, stack, r, k));
     }

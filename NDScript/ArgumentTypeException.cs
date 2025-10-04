@@ -1,5 +1,6 @@
 ﻿using NDScript.Syntax;
 using System;
+using System.Data;
 using static NDScript.Printing;
 
 namespace NDScript
@@ -9,23 +10,23 @@ namespace NDScript
         public readonly Type ExpectedType = expectedType;
         public readonly object? ActualValue = actualValue;
 
-        public static T Cast<T>(object? value, string message, AstNode? site=null, CallStack? stack = null)
+        public static T Cast<T>(object? value, string message, State s, AstNode? site=null, CallStack? stack = null)
         {
             if (value is T typed)
                 return typed;
-            var ex = new ArgumentTypeException($"{message}; expected {Format(value, true)} to be a {typeof(T)}.", typeof(T), value);
-            throw site != null? new ExecutionException(site, stack, ex): ex;
+            var ex = new ArgumentTypeException($"{message}; expected {Format(value, s, true)} to be a {typeof(T)}.", typeof(T), value);
+            throw site != null? new ExecutionException(site, s, stack, ex): ex;
         }
 
-        public static T Cast<T>(object? value, string operation, string argumentName, AstNode? site=null, CallStack? stack = null)
+        public static T Cast<T>(object? value, string operation, string argumentName, State s, AstNode? site=null, CallStack? stack = null)
         {
             if (value is T typed)
                 return typed;
-            var ex = new ArgumentTypeException($"Argument {argumentName} to {operation} was expected to be a {typeof(T).Name}, but was instead the value {Printing.Format(value, true)}.", typeof(T), value);
-            throw site != null? new ExecutionException(site, stack, ex): ex;
+            var ex = new ArgumentTypeException($"Argument {argumentName} to {operation} was expected to be a {typeof(T).Name}, but was instead the value {Printing.Format(value, s,true)}.", typeof(T), value);
+            throw site != null? new ExecutionException(site, s, stack, ex): ex;
         }
 
-        public static float CastSingle(object? value, string operation, string argumentName, AstNode? site=null, CallStack? stack = null)
+        public static float CastSingle(object? value, string operation, string argumentName, State s, AstNode? site=null, CallStack? stack = null)
         {
             switch (value)
             {
@@ -37,20 +38,20 @@ namespace NDScript
                     return (float)d;
                 default:
                     var ex = new ArgumentTypeException(
-                        $"Argument {argumentName} to {operation} was expected to be a number, but was instead the value {Format(value, true)}.",
+                        $"Argument {argumentName} to {operation} was expected to be a number, but was instead the value {Format(value, s,true)}.",
                         typeof(float), value);
-                    throw site != null? new ExecutionException(site, stack, ex): ex;
+                    throw site != null? new ExecutionException(site, s, stack, ex): ex;
             }
         }
 
-        public static StateElement CastObject<T>(object? value, Type fakeType, string message, AstNode? site=null, CallStack? stack = null)
+        public static StateElement CastObject<T>(object? value, Type fakeType, string message, State s, AstNode? site=null, CallStack? stack = null)
         {
             var si = value as StateElement;
             if (si == null || !(si.Description is T))
             {
-                var ex = new ArgumentTypeException($"{message}.  Expected {fakeType.Name}, got {Format(value, true)}",
+                var ex = new ArgumentTypeException($"{message}.  Expected {fakeType.Name}, got {Format(value, s, true)}",
                     fakeType, value);
-                throw site != null? new ExecutionException(site, stack, ex): ex;
+                throw site != null? new ExecutionException(site, s, stack, ex): ex;
             }
 
             return si;

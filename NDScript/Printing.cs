@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 
@@ -33,14 +32,14 @@ namespace NDScript
 
         public static State Print(string d, State s) => PrintRaw(Htmlify(d), s);
 
-        public static string Format(object? o, bool escapeStrings = false)
+        public static string Format(object? o, State state, bool escapeStrings = false)
         {
             var b = new StringBuilder();
-            Format(o, b, escapeStrings);
+            Format(o, b, state, escapeStrings);
             return b.ToString();
         }
 
-        public static void Format(object? o, StringBuilder b, bool escapeStrings = false)
+        public static void Format(object? o, StringBuilder b, State state, bool escapeStrings = false)
         {
             switch (o)
             {
@@ -87,26 +86,26 @@ namespace NDScript
                             first = false;
                         else
                             b.Append(", ");
-                        Format(e, b, true);
+                        Format(e, b, state, true);
                     }
 
                     b.Append("}");
                     break;
                 }
 
-                case ImmutableDictionary<string, object?> obj:
+                case CompoundObject obj:
                 {
                     b.Append("{");
                     var first = true;
-                    foreach (var f in obj)
+                    foreach (var f in obj.CurrentDictionary(state))
                     {
                         if (first)
                             first = false;
                         else
                             b.Append(", ");
-                        Format(f.Key, b, false);
+                        Format(f.Key, b, state, false);
                         b.Append(": ");
-                        Format(f.Value, b, true);
+                        Format(f.Value, b, state, true);
                     }
 
                     b.Append("}");
@@ -123,7 +122,7 @@ namespace NDScript
                             first = false;
                         else
                             b.Append(", ");
-                        Format(e, b, true);
+                        Format(e, b, state, true);
                     }
 
                     b.Append("]");
@@ -136,7 +135,7 @@ namespace NDScript
             }
         }
 
-        public static State Print(object? o, State s) => Print(Format(o), s);
+        public static State Print(object? o, State s) => Print(Format(o, s), s);
 
         public static State NewLine(State s) => Print("\n", s);
         public static State PrintImage(string url, State s) =>

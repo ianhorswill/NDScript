@@ -13,7 +13,7 @@ namespace NDScript
         private Dictionary<object?, ImmutableHashSet<object?>>? leftImage, rightImage;
         public override bool Call(object?[] arguments, FunctionCall callSite, State s, CallStack stack, Continuation k)
         {
-            ArgumentCountException.Check(2, arguments, this);
+            ArgumentCountException.Check(2, arguments, this, s);
             return k(_extension.Contains((arguments[0]!, arguments[1]!)), s);
         }
 

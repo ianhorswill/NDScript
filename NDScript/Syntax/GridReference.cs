@@ -17,9 +17,9 @@ namespace NDScript.Syntax
                     Y.Execute(ms, stack, r, (y, fs) =>
             {
                 var grid = ArgumentTypeException.Cast<Grid>(array,
-                    "Argument to grid reference was not a grid");
-                var xi = ArgumentTypeException.Cast<int>(x, "X index of grid reference isn't an integer");
-                var yi = ArgumentTypeException.Cast<int>(y, "X index of grid reference isn't an integer");
+                    "Argument to grid reference was not a grid", fs);
+                var xi = ArgumentTypeException.Cast<int>(x, "X index of grid reference isn't an integer", fs);
+                var yi = ArgumentTypeException.Cast<int>(y, "X index of grid reference isn't an integer", fs);
                 return k(grid.GetCell(xi, yi, fs), fs);
             })));
         }
@@ -31,9 +31,9 @@ namespace NDScript.Syntax
                     Y.Execute(ms, stack, r, (y, fs) =>
                     {
                         var grid = ArgumentTypeException.Cast<Grid>(array,
-                            "Argument to grid reference was not a grid");
-                        var xi = ArgumentTypeException.Cast<int>(x, "X index of grid reference isn't an integer");
-                        var yi = ArgumentTypeException.Cast<int>(y, "X index of grid reference isn't an integer");
+                            "Argument to grid reference was not a grid", fs);
+                        var xi = ArgumentTypeException.Cast<int>(x, "X index of grid reference isn't an integer", fs);
+                        var yi = ArgumentTypeException.Cast<int>(y, "X index of grid reference isn't an integer", fs);
                         return k(value, grid.SetCell(xi, yi, fs, value));
                     })));
         }

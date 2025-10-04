@@ -20,7 +20,7 @@ namespace NDScript
             {
                 case StateElement:
                     return (ImmutableArray<object?>)s.Global[
-                        ArgumentTypeException.CastObject<ArrayExpression>(value, typeof(IList), errorMessage, site,
+                        ArgumentTypeException.CastObject<ArrayExpression>(value, typeof(IList), errorMessage, s, site,
                             stack)]!;
                 case IList<object?> l:
                     return l;
@@ -28,7 +28,7 @@ namespace NDScript
                     return new List<object?>(ie);
                 default:
                     var ex = new ArgumentTypeException(errorMessage, typeof(IList), value);
-                    throw site != null? new ExecutionException(site, stack, ex): ex;
+                    throw site != null? new ExecutionException(site, s, stack, ex): ex;
             }
         }
 
@@ -42,11 +42,11 @@ namespace NDScript
                 {
                     var argCount = args.Length;
                     if (argCount == 0 || argCount > 2)
-                        ArgumentCountException.Check(2, args, _chooseElement!, site, stack);
+                        ArgumentCountException.Check(2, args, _chooseElement!, state, site, stack);
                     var collection = ConvertToList(args[0], state, "Argument to chooseElement() is not a collection");
                     var weights = argCount == 2
-                        ? ArgumentTypeException.Cast<ImmutableDictionary<string, object?>>(args[1], "chooseElement", "weights",
-                            site, stack):null;
+                        ? ArgumentTypeException.Cast<CompoundObject>(args[1], "chooseElement", "weights", state,
+                            site, stack).CurrentDictionary(state):null;
 
                     var elements = collection!.Select(e => new KeyValuePair<float,object?>(1,e)).ToArray();
                     if (weights != null)

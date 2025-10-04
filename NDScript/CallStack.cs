@@ -41,7 +41,7 @@ namespace NDScript
                         first = false;
                     else
                         b.Append(", ");
-                    Printing.Format(a, b, true);
+                    Printing.Format(a, b, State.Default, true);
                 }
 
                 b.AppendLine(")");
