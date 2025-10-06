@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NDScript
@@ -27,7 +28,7 @@ namespace NDScript
                 (args, site, s, stack, k) =>
                 {
                     ArgumentCountException.Check(1, args, _singletonValuePrimitive!, s, site, stack);
-                    var set = ArgumentTypeException.Cast<ImmutableHashSet<object?>>(args[0], "singletonValue", "set", s, site, stack);
+                    var set = ArgumentTypeException.Cast<ICollection<object?>>(args[0], "singletonValue", "set", s, site, stack);
                     return Collections.IsSingleton(set) && k(set.First(), s);
                 });
         }

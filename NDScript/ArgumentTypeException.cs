@@ -20,6 +20,8 @@ namespace NDScript
 
         public static T Cast<T>(object? value, string operation, string argumentName, State s, AstNode? site=null, CallStack? stack = null)
         {
+            if (value is StateElement e)
+                value = s[e];
             if (value is T typed)
                 return typed;
             var ex = new ArgumentTypeException($"Argument {argumentName} to {operation} was expected to be a {typeof(T).Name}, but was instead the value {Printing.Format(value, s,true)}.", typeof(T), value);

@@ -18,7 +18,7 @@ public class MemberReference(int sourceLine, Expression expression, string membe
             var (value, success) = obj.GetMember(MemberName, ns);
             if (!success)
                     throw new ExecutionException(this, ns, stack,
-                        new MissingMemberException($"Object has no field named {memberName}"));
+                        new MissingMemberException($"Object has no field named {MemberName}"));
             return k(value, ns);
         });
     }
