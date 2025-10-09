@@ -16,6 +16,7 @@ namespace NDScript
             Collections.MakePrimitives();
             Relation.MakePrimitives();
             Logic.MakePrimitives();
+            CompoundObject.MakePrimitives();
         }
     }
 }

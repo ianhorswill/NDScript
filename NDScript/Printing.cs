@@ -41,6 +41,8 @@ namespace NDScript
 
         public static void Format(object? o, StringBuilder b, State state, bool escapeStrings = false)
         {
+            if (o is StateElement el)
+                o = state[el];
             switch (o)
             {
                 case null:

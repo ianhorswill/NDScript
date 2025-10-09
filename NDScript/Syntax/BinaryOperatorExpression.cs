@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Security.Cryptography;
 using static NDScript.NDScript;
 
 namespace NDScript.Syntax
@@ -96,7 +97,7 @@ namespace NDScript.Syntax
         public static bool CheckEquality(object? left, object? right)
         {
             if (left is ImmutableHashSet<object?> sl && right is ImmutableHashSet<object?> sr)
-                return sl.IsSubsetOf(sr) && sr.IsSubsetOf(sl);
+                return sl.SetEquals(sr);
             if (left is IList<object?> al && right is IList<object?> ar)
             {
                 if (al.Count != ar.Count) return false;

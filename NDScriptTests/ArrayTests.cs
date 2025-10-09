@@ -80,5 +80,12 @@ namespace NDScriptTests
             Assert.IsTrue(chooseA < 40);
             Assert.IsTrue(chooseB > 60);
         }
+
+        [TestMethod]
+        public void UpdateTest()
+        {
+            Assert.AreEqual("[1, 1, 3]",
+                ProgramOutput("var a = [1, 2, 3]; a[1] = 1; print(a);"));
+        }
     }
 }
