@@ -47,6 +47,14 @@ namespace NDScript.Syntax
                    * ArgumentTypeException.CastSingle(right, "*", "right", s);
         }
 
+        public static object? Modulus(object? left, object? right, State s)
+        {
+            if (left is int nl && right is int nr)
+                return nl % nr;
+            return ArgumentTypeException.CastSingle(left, "%", "left", s)
+                   % ArgumentTypeException.CastSingle(right, "%", "right", s);
+        }
+
         public static object? Divide(object? left, object? right, State s)
         {
             if (left is int nl && right is int nr)
@@ -61,8 +69,8 @@ namespace NDScript.Syntax
             if (left is int nl && right is int nr)
                 // Promote to floating-point division if there's a remainder
                 return nl < nr;
-            return ArgumentTypeException.CastSingle(left, "/", "left", s)
-                   < ArgumentTypeException.CastSingle(right, "/", "right", s);
+            return ArgumentTypeException.CastSingle(left, "<", "left", s)
+                   < ArgumentTypeException.CastSingle(right, "<", "right", s);
         }
 
         public static object? Le(object? left, object? right, State s)
@@ -70,8 +78,8 @@ namespace NDScript.Syntax
             if (left is int nl && right is int nr)
                 // Promote to floating-point division if there's a remainder
                 return nl <= nr;
-            return ArgumentTypeException.CastSingle(left, "/", "left", s)
-                   <= ArgumentTypeException.CastSingle(right, "/", "right", s);
+            return ArgumentTypeException.CastSingle(left, "<=", "left", s)
+                   <= ArgumentTypeException.CastSingle(right, "<=", "right", s);
         }
 
         public static object? Gt(object? left, object? right, State s)
@@ -79,8 +87,8 @@ namespace NDScript.Syntax
             if (left is int nl && right is int nr)
                 // Promote to floating-point division if there's a remainder
                 return nl > nr;
-            return ArgumentTypeException.CastSingle(left, "/", "left", s)
-                   > ArgumentTypeException.CastSingle(right, "/", "right", s);
+            return ArgumentTypeException.CastSingle(left, ">", "left", s)
+                   > ArgumentTypeException.CastSingle(right, ">", "right", s);
         }
 
         public static object? Ge(object? left, object? right, State s)
@@ -88,8 +96,8 @@ namespace NDScript.Syntax
             if (left is int nl && right is int nr)
                 // Promote to floating-point division if there's a remainder
                 return nl >= nr;
-            return ArgumentTypeException.CastSingle(left, "/", "left", s)
-                   >= ArgumentTypeException.CastSingle(right, "/", "right", s);
+            return ArgumentTypeException.CastSingle(left, ">=", "left", s)
+                   >= ArgumentTypeException.CastSingle(right, ">=", "right", s);
         }
 
         public static object Eq(object? left, object? right, State _) => CheckEquality(left, right);

@@ -220,12 +220,14 @@ namespace NDScript.Syntax
         #region Multiplicative expression
         private static readonly Parser<Func<object?, object?, State, object?>> Times =
             Parse.Char('*').Return(BinaryOperatorExpression.Multiply).Token();
+        private static readonly Parser<Func<object?, object?, State, object?>> Mod =
+            Parse.Char('%').Return(BinaryOperatorExpression.Modulus).Token();
         private static readonly Parser<Func<object?, object?, State, object?>> Divide =
             Parse.Char('/').Return(BinaryOperatorExpression.Divide).Token();
 
         public static readonly Parser<Expression> MultiplicativeExpression =
             from line in LineNumber
-            from result in ChainOperatorCommitted(Times.Or(Divide), UnaryExpression.Named("expression"),
+            from result in ChainOperatorCommitted(Times.Or(Mod).Or(Divide), UnaryExpression.Named("expression"),
                 (op, left, right) => new BinaryOperatorExpression(line, op, left, right))
             select result;
         #endregion
