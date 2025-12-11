@@ -249,7 +249,7 @@ namespace NDScript.Syntax
         private static readonly Parser<Func<object?, object?, State, object?>> RelationalOperator =
             (Parse.String("<=").Return(BinaryOperatorExpression.Le)).Or((Parse.String(">=").Return(BinaryOperatorExpression.Ge)))
             .Or((Parse.Char('<').Return(BinaryOperatorExpression.Lt)))
-            .Or((Parse.Char('>').Return(BinaryOperatorExpression.Lt))).Token().Named("relational operator");
+            .Or((Parse.Char('>').Return(BinaryOperatorExpression.Gt))).Token().Named("relational operator");
 
         private static Parser<TExp> RelationExpressionCompletion<TExp, TRel>(TExp left, Parser<TRel> op, Parser<TExp> exp, Func<TExp, TRel, TExp, TExp> result) =>
             (from o in op

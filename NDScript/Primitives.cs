@@ -8,6 +8,7 @@ namespace NDScript
 
         static Primitives()
         {
+            new DeterministicPrimitive<int, int, int>("floor", (x, y) => x / y);
             Printing.MakePrimitives();
             Minimization.MakePrimitives();
             Grid.MakePrimitives();

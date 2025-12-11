@@ -78,6 +78,6 @@ namespace NDScript
             return comment < 0 ? line : line.Substring(0, comment);
         }
 
-        private static string StripComments(string code) => string.Join('\n', code.Split('\n').Select(StripLineComment));
+        public static string StripComments(string code) => string.Join('\n', code.Split('\n').Select(StripLineComment));
     }
 }
