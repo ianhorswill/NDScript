@@ -22,6 +22,11 @@ namespace NDScript
             new DeterministicPrimitive<ImmutableHashSet<object?>, ImmutableHashSet<object?>, ImmutableHashSet<object?>>(
                 "intersection",
                 (s1, s2) => s1.Intersect(s2));
+
+            new DeterministicPrimitive<ImmutableHashSet<object?>, ImmutableHashSet<object?>, ImmutableHashSet<object?>>(
+                "except",
+                (s1, s2) => s1.Except(s2));
+
             // ReSharper restore ObjectCreationAsStatement
 
             _singletonValuePrimitive = new GeneralPrimitive("singletonValue", true,
